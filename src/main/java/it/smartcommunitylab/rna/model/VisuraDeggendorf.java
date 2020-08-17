@@ -10,9 +10,8 @@ public class VisuraDeggendorf {
 	@Id
 	private String id;
 	
-	private String richiestAiutoId;
-	private String praticaId;
-	private String richiestaId;
+	private String cf;
+	private Long richiestaId;
 	private boolean visuraDisponibile = false;
 	private String mimeType;
 	private Binary file;
@@ -23,22 +22,10 @@ public class VisuraDeggendorf {
 	public void setId(String id) {
 		this.id = id;
 	}
-	public String getRichiestAiutoId() {
-		return richiestAiutoId;
-	}
-	public void setRichiestAiutoId(String richiestAiutoId) {
-		this.richiestAiutoId = richiestAiutoId;
-	}
-	public String getPraticaId() {
-		return praticaId;
-	}
-	public void setPraticaId(String praticaId) {
-		this.praticaId = praticaId;
-	}
-	public String getRichiestaId() {
+	public Long getRichiestaId() {
 		return richiestaId;
 	}
-	public void setRichiestaId(String richiestaId) {
+	public void setRichiestaId(Long richiestaId) {
 		this.richiestaId = richiestaId;
 	}
 	public boolean isVisuraDisponibile() {
@@ -58,6 +45,12 @@ public class VisuraDeggendorf {
 	}
 	public void setFile(Binary file) {
 		this.file = file;
+	}
+	public String getCf() {
+		return cf;
+	}
+	public void setCf(String cf) {
+		this.cf = cf;
 	}
 	
 }

@@ -22,7 +22,7 @@ public class RegistrazioneAiuto {
 	
 	private String praticaId;
 	private String cf;
-	private String richiestaId;
+	private Long richiestaId;
 	private Esito esito;
 	
 	private boolean concessioneConfermata = false;
@@ -83,10 +83,10 @@ public class RegistrazioneAiuto {
 	public void setDataAnnullamento(LocalDate dataAnnullamento) {
 		this.dataAnnullamento = dataAnnullamento;
 	}
-	public String getRichiestaId() {
+	public Long getRichiestaId() {
 		return richiestaId;
 	}
-	public void setRichiestaId(String richiestaId) {
+	public void setRichiestaId(Long richiestaId) {
 		this.richiestaId = richiestaId;
 	}
 	

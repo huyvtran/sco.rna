@@ -9,8 +9,11 @@ import java.io.Writer;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.annotation.PostConstruct;
 import javax.net.ssl.HttpsURLConnection;
@@ -28,6 +31,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import it.smartcommunitylab.rna.beans.EsitoRichiesta;
 import it.smartcommunitylab.rna.common.Utils;
 import it.smartcommunitylab.rna.exception.ParseErrorException;
 
@@ -113,5 +117,10 @@ public class RnaManager {
 			logger.error("velocityParser error: " + e.getClass() + " " + e.getMessage());
 			throw new ParseErrorException(e.getMessage());
 		}
+	}
+	
+	protected List<EsitoRichiesta> getEsitoRichiesta(String content) {
+		//TODO estrazione risultati richieste
+		return new ArrayList<EsitoRichiesta>();
 	}
 }

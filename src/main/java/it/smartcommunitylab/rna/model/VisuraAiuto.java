@@ -4,16 +4,18 @@ import org.bson.types.Binary;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import it.smartcommunitylab.rna.beans.EsitoRichiesta;
+
 @Document
 public class VisuraAiuto {
 	
 	@Id
 	private String id;
 	
-	private String richiestAiutoId;
-	private String praticaId;
-	private String richiestaId;
+	private String cf;
+	private Long richiestaId;
 	private boolean visuraDisponibile = false;
+	private EsitoRichiesta esito;
 	private String mimeType;
 	private Binary file;
 	 
@@ -23,22 +25,10 @@ public class VisuraAiuto {
 	public void setId(String id) {
 		this.id = id;
 	}
-	public String getRichiestAiutoId() {
-		return richiestAiutoId;
-	}
-	public void setRichiestAiutoId(String richiestAiutoId) {
-		this.richiestAiutoId = richiestAiutoId;
-	}
-	public String getPraticaId() {
-		return praticaId;
-	}
-	public void setPraticaId(String praticaId) {
-		this.praticaId = praticaId;
-	}
-	public String getRichiestaId() {
+	public Long getRichiestaId() {
 		return richiestaId;
 	}
-	public void setRichiestaId(String richiestaId) {
+	public void setRichiestaId(Long richiestaId) {
 		this.richiestaId = richiestaId;
 	}
 	public boolean isVisuraDisponibile() {
@@ -58,6 +48,18 @@ public class VisuraAiuto {
 	}
 	public void setFile(Binary file) {
 		this.file = file;
+	}
+	public String getCf() {
+		return cf;
+	}
+	public void setCf(String cf) {
+		this.cf = cf;
+	}
+	public EsitoRichiesta getEsito() {
+		return esito;
+	}
+	public void setEsito(EsitoRichiesta esito) {
+		this.esito = esito;
 	}
 	
 }
