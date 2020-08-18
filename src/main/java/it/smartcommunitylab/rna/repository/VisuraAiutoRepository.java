@@ -11,5 +11,5 @@ import it.smartcommunitylab.rna.model.VisuraAiuto;
 public interface VisuraAiutoRepository extends MongoRepository<VisuraAiuto, String> {
 	VisuraAiuto findByCf(String cf);
 	List<VisuraAiuto> findByEsitoIsNull();
-	List<VisuraAiuto> findByRichiestaIdIsNotNullAndVisuraDisponibileIsFalse();
+	List<VisuraAiuto> findByRichiestaIdIsNotNullAndFileIsNull();
 }

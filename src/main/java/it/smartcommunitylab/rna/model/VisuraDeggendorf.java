@@ -4,6 +4,8 @@ import org.bson.types.Binary;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import it.smartcommunitylab.rna.beans.EsitoRichiesta;
+
 @Document
 public class VisuraDeggendorf {
 	
@@ -12,7 +14,7 @@ public class VisuraDeggendorf {
 	
 	private String cf;
 	private Long richiestaId;
-	private boolean visuraDisponibile = false;
+	private EsitoRichiesta esito;
 	private String mimeType;
 	private Binary file;
 	 
@@ -27,12 +29,6 @@ public class VisuraDeggendorf {
 	}
 	public void setRichiestaId(Long richiestaId) {
 		this.richiestaId = richiestaId;
-	}
-	public boolean isVisuraDisponibile() {
-		return visuraDisponibile;
-	}
-	public void setVisuraDisponibile(boolean visuraDisponibile) {
-		this.visuraDisponibile = visuraDisponibile;
 	}
 	public String getMimeType() {
 		return mimeType;
@@ -51,6 +47,12 @@ public class VisuraDeggendorf {
 	}
 	public void setCf(String cf) {
 		this.cf = cf;
+	}
+	public EsitoRichiesta getEsito() {
+		return esito;
+	}
+	public void setEsito(EsitoRichiesta esito) {
+		this.esito = esito;
 	}
 	
 }

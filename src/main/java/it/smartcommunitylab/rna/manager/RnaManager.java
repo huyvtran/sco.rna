@@ -1,9 +1,11 @@
 package it.smartcommunitylab.rna.manager;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URL;
@@ -13,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import javax.annotation.PostConstruct;
 import javax.net.ssl.HttpsURLConnection;
@@ -26,10 +27,18 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
+import org.bson.types.Binary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.w3c.dom.CharacterData;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 import it.smartcommunitylab.rna.beans.EsitoRichiesta;
 import it.smartcommunitylab.rna.common.Utils;
@@ -63,6 +72,14 @@ public class RnaManager {
 		dbf.setNamespaceAware(true);
 		DocumentBuilder db = dbf.newDocumentBuilder();
 		return db;
+	}
+	
+	protected Document getDocument(String content) throws ParserConfigurationException, SAXException, IOException {
+    DocumentBuilder db = getDocumentBuilder();
+		InputSource is = new InputSource();
+    is.setCharacterStream(new StringReader(content));
+    Document doc = db.parse(is);
+    return doc;
 	}
 	
 	protected String postRequest(String contentString, String action) throws Exception {
@@ -119,8 +136,36 @@ public class RnaManager {
 		}
 	}
 	
-	protected List<EsitoRichiesta> getEsitoRichiesta(String content) {
+	protected EsitoRichiesta getEsitoRichiesta(String content) {
+		//TODO estrazione risultato richiesta
+		return new EsitoRichiesta();
+	}
+	
+	protected List<EsitoRichiesta> getEsitoRichieste(String content) {
 		//TODO estrazione risultati richieste
 		return new ArrayList<EsitoRichiesta>();
 	}
+	
+	protected Binary getFile(String content, String tag) throws Exception {
+		//TODO estrazione file
+		Document doc = getDocument(content);
+		NodeList nodeList = doc.getElementsByTagNameNS("*", tag);
+		if(nodeList.getLength() > 0) {
+			Element element = (Element) nodeList.item(0);
+			String byteString = getStringDataFromElement(element);
+			Binary file = new Binary(byteString.getBytes("UTF-8"));
+			return file;
+		}
+		return null;
+	}
+	
+	protected String getStringDataFromElement(Element e) {
+    Node child = e.getFirstChild();
+    if (child instanceof CharacterData) {
+      CharacterData cd = (CharacterData) child;
+      return cd.getData();
+    }
+    return "";
+  }
+
 }

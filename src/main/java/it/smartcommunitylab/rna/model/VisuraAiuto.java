@@ -14,7 +14,6 @@ public class VisuraAiuto {
 	
 	private String cf;
 	private Long richiestaId;
-	private boolean visuraDisponibile = false;
 	private EsitoRichiesta esito;
 	private String mimeType;
 	private Binary file;
@@ -30,12 +29,6 @@ public class VisuraAiuto {
 	}
 	public void setRichiestaId(Long richiestaId) {
 		this.richiestaId = richiestaId;
-	}
-	public boolean isVisuraDisponibile() {
-		return visuraDisponibile;
-	}
-	public void setVisuraDisponibile(boolean visuraDisponibile) {
-		this.visuraDisponibile = visuraDisponibile;
 	}
 	public String getMimeType() {
 		return mimeType;
