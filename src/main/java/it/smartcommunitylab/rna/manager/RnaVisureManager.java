@@ -24,12 +24,23 @@ public class RnaVisureManager extends RnaManager {
 	@Autowired
 	private VisuraDeggendorfRepository visuraDeggendorfRepository;
 	
-	public VisuraAiuto addVisuraAiuto(String cf) throws Exception {
+	public VisuraAiuto addRichiestaVisuraAiuto(String cf) throws Exception {
 		VisuraAiuto visuraDb = visuraAiutoRepository.findByCf(cf);
 		if(visuraDb == null) {
 			VisuraAiuto visura = new VisuraAiuto();
 			visura.setCf(cf);
 			visuraAiutoRepository.save(visura);
+			return visura;
+		}
+		return visuraDb;
+	}
+	
+	public VisuraDeggendorf addRichiestaVisuraDeggendorf(String cf) throws Exception {
+		VisuraDeggendorf visuraDb = visuraDeggendorfRepository.findByCf(cf);
+		if(visuraDb == null) {
+			VisuraDeggendorf visura = new VisuraDeggendorf();
+			visura.setCf(cf);
+			visuraDeggendorfRepository.save(visura);
 			return visura;
 		}
 		return visuraDb;
@@ -47,7 +58,7 @@ public class RnaVisureManager extends RnaManager {
 			for(EsitoRichiesta esito : listEsito) {
 				if(esito.isSuccess()) {
 					VisuraAiuto visuraDb = visuraAiutoRepository.findByCf(esito.getEntityId());
-					if(visuraDb!= null) {
+					if(visuraDb != null) {
 						visuraDb.setEsito(esito);
 						if(esito.getCode() <= 0) {
 							visuraDb.setRichiestaId(esito.getRichiestaId());
