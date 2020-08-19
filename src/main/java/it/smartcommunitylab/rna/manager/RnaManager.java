@@ -11,9 +11,7 @@ import java.io.Writer;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Base64;
-import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
@@ -139,11 +137,6 @@ public class RnaManager {
 	protected EsitoRichiesta getEsitoRichiesta(String content) {
 		//TODO estrazione risultato richiesta
 		return new EsitoRichiesta();
-	}
-	
-	protected List<EsitoRichiesta> getEsitoRichieste(String content) {
-		//TODO estrazione risultati richieste
-		return new ArrayList<EsitoRichiesta>();
 	}
 	
 	protected Binary getFile(String content, String tag) throws Exception {

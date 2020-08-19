@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import it.smartcommunitylab.rna.beans.EsitoRichiesta;
+import it.smartcommunitylab.rna.beans.EsitoRichiestaAiuto;
 import it.smartcommunitylab.rna.beans.LocalDateDeserializer;
 
 @Document
@@ -25,15 +26,13 @@ public class RegistrazioneAiuto {
 	private String cf;
 	private Long registrazioneId;
 	private EsitoRichiesta esitoRegistrazione;
-	private Stato statoRichiesta;
+	private EsitoRichiestaAiuto esitoAiuto;
 	
-	private Long confermaId;
 	private EsitoRichiesta esitoConferma;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
 	@JsonDeserialize(using = LocalDateDeserializer.class)
 	private LocalDate dataConferma;
 	
-	private Long annullamentoId;
 	private EsitoRichiesta esitoAnnullamento;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
 	@JsonDeserialize(using = LocalDateDeserializer.class)
@@ -75,29 +74,11 @@ public class RegistrazioneAiuto {
 	public void setEsitoRegistrazione(EsitoRichiesta esitoRegistrazione) {
 		this.esitoRegistrazione = esitoRegistrazione;
 	}
-	public Stato getStatoRichiesta() {
-		return statoRichiesta;
-	}
-	public void setStatoRichiesta(Stato statoRichiesta) {
-		this.statoRichiesta = statoRichiesta;
-	}
-	public Long getConfermaId() {
-		return confermaId;
-	}
-	public void setConfermaId(Long confermaId) {
-		this.confermaId = confermaId;
-	}
 	public EsitoRichiesta getEsitoConferma() {
 		return esitoConferma;
 	}
 	public void setEsitoConferma(EsitoRichiesta esitoConferma) {
 		this.esitoConferma = esitoConferma;
-	}
-	public Long getAnnullamentoId() {
-		return annullamentoId;
-	}
-	public void setAnnullamentoId(Long annullamentoId) {
-		this.annullamentoId = annullamentoId;
 	}
 	public EsitoRichiesta getEsitoAnnullamento() {
 		return esitoAnnullamento;
@@ -110,6 +91,12 @@ public class RegistrazioneAiuto {
 	}
 	public void setDataAnnullamento(LocalDate dataAnnullamento) {
 		this.dataAnnullamento = dataAnnullamento;
+	}
+	public EsitoRichiestaAiuto getEsitoAiuto() {
+		return esitoAiuto;
+	}
+	public void setEsitoAiuto(EsitoRichiestaAiuto esitoAiuto) {
+		this.esitoAiuto = esitoAiuto;
 	}
 	
 }
