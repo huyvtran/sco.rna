@@ -11,9 +11,9 @@ import it.smartcommunitylab.rna.model.RegistrazioneAiuto;
 @Repository
 public interface RegistrazioneAiutoRepository extends MongoRepository<RegistrazioneAiuto, String> {
 	RegistrazioneAiuto findByPraticaId(String praticaId);
-	RegistrazioneAiuto findByRegistrazioneId(Long registrazioneId);
+	RegistrazioneAiuto findByConcessioneGestoreId(String concessioneGestoreId);
+	RegistrazioneAiuto findByCor(Integer cor);
 	List<RegistrazioneAiuto> findByEsitoRegistrazioneIsNull();
-	List<RegistrazioneAiuto> findByRegistrazioneIdIsNotNullAndEsitoAiutoIsNull();
 	@Query(value="{praticaId:{$in:?0}}")
 	List<RegistrazioneAiuto> findByPraticheIds(List<String> praticheIds);
 }

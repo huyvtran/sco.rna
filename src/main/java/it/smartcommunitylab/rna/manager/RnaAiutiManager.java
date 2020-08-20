@@ -11,16 +11,27 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 
+import it.smartcommunitylab.rna.beans.ConfermaConcessione;
 import it.smartcommunitylab.rna.beans.EsitoRichiesta;
 import it.smartcommunitylab.rna.beans.EsitoRichiestaAiuto;
+import it.smartcommunitylab.rna.exception.ServiceErrorException;
 import it.smartcommunitylab.rna.model.RegistrazioneAiuto;
+import it.smartcommunitylab.rna.model.RichiestaRegistrazioneAiuto;
 import it.smartcommunitylab.rna.repository.RegistrazioneAiutoRepository;
+import it.smartcommunitylab.rna.repository.RichiestaRegistrazioneAiutoRepository;
 
 public class RnaAiutiManager extends RnaManager {
 	private static final transient Logger logger = LoggerFactory.getLogger(RnaAiutiManager.class);
 	
 	@Autowired
 	private RegistrazioneAiutoRepository repository;
+	private RichiestaRegistrazioneAiutoRepository richiestaRepository;
+	
+	public List<RegistrazioneAiuto> getRegistrazioneAiuto(List<String> praticheIds) {
+		List<RegistrazioneAiuto> pratiche = repository.findByPraticheIds(praticheIds);
+		logger.info(String.format("getRegistrazioneAiuto: %s", pratiche.size()));
+		return pratiche;
+	}
 	
 	public void addRegistrazioneAiuto(List<RegistrazioneAiuto> pratiche, Integer codiceBando) throws Exception {
 		List<RegistrazioneAiuto> nuovePratiche = new ArrayList<>();
@@ -40,37 +51,42 @@ public class RnaAiutiManager extends RnaManager {
 		inviaRichiesteAiuto(nuovePratiche, codiceBando);
 	}
 	
-	private void inviaRichiesteAiuto(List<RegistrazioneAiuto> pratiche, Integer codiceBando) {
-		for(RegistrazioneAiuto pratica : pratiche) {
-			try {
-				Map<String, Object> contextMap = new HashMap<>(); 
-				contextMap.put("pratica", pratica);
-				contextMap.put("codiceBando", codiceBando);
-				String contentString = velocityParser("templates/registra-aiuto.xml", contextMap);
-				String risposta = postRequest(contentString, "RegistraAiuto");
-				EsitoRichiesta esito = getEsitoRichiesta(risposta);
-				if(esito.isSuccess()) {
-					pratica.setEsitoRegistrazione(esito);
-					if(esito.getCode() <= 0) {
-						pratica.setRegistrazioneId(esito.getRichiestaId());						
-					}
-					repository.save(pratica);
-				} else {
-					logger.warn(String.format("inviaRichiesteAiuto: errore invio richiesta  %s - %s - %s", 
-							pratica.getPraticaId(), esito.getCode(), esito.getMessage()));
+	private void inviaRichiesteAiuto(List<RegistrazioneAiuto> pratiche, Integer codiceBando) throws Exception {
+		RichiestaRegistrazioneAiuto richiesta = new RichiestaRegistrazioneAiuto();
+		richiesta.setCodiceBando(codiceBando);
+		try {
+			Map<String, Object> contextMap = new HashMap<>(); 
+			contextMap.put("pratiche", pratiche);
+			contextMap.put("codiceBando", codiceBando);
+			String contentString = velocityParser("templates/registra-aiuto.xml", contextMap);
+			String risposta = postRequest(contentString, "RegistraAiuto");
+			EsitoRichiesta esito = getEsitoRichiesta(risposta);
+			if(esito.isSuccess()) {
+				richiesta.setEsitoRegistrazione(esito);
+				if(esito.getCode() <= 0) {
+					richiesta.setRichiestaId(esito.getRichiestaId());						
 				}
-			} catch (Exception e) {
-				logger.warn(String.format("inviaRichiesteAiuto: errore compilazione richiesta %s - %s", pratica.getPraticaId(), e.getMessage()));
+				richiestaRepository.save(richiesta);
+			} else {
+				logger.warn(String.format("inviaRichiesteAiuto: errore invio richiesta  %s - %s", 
+						esito.getCode(), esito.getMessage()));
+				throw new ServiceErrorException(esito.getCode() + " - " + esito.getMessage());
 			}
-		}		
+		} catch (Exception e) {
+			logger.error(String.format("inviaRichiesteAiuto: errore compilazione richiesta %s", e.getMessage()));
+			throw new ServiceErrorException(e.getMessage());
+		}
 	}	
-	public void confermaAiuto(List<String> praticheIds, Integer codiceBando) {
-		List<RegistrazioneAiuto> pratiche = repository.findByPraticheIds(praticheIds);
-		for(RegistrazioneAiuto pratica : pratiche) {
+	
+	public void confermaAiuto(List<ConfermaConcessione> concessioni) {
+		for(ConfermaConcessione concessione : concessioni) {
+			RegistrazioneAiuto pratica = repository.findByCor(concessione.getCor());
+			pratica.setAttoConcessione(concessione.getAttoConcessione());
+			pratica.setDataConcessione(concessione.getDataConcessione());
+			repository.save(pratica);
 			try {
 				Map<String, Object> contextMap = new HashMap<>(); 
 				contextMap.put("pratica", pratica);
-				contextMap.put("codiceBando", codiceBando);
 				String contentString = velocityParser("templates/conferma-concessione.xml", contextMap);
 				String risposta = postRequest(contentString, "ConfermaConcessione");
 				EsitoRichiesta esito = getEsitoRichiesta(risposta);
@@ -83,17 +99,17 @@ public class RnaAiutiManager extends RnaManager {
 							pratica.getPraticaId(), esito.getCode(), esito.getMessage()));					
 				}
 			} catch (Exception e) {
-				logger.warn(String.format("confermaAiuto: errore compilazione richiesta %s - %s", pratica.getPraticaId(), e.getMessage()));
+				logger.error(String.format("confermaAiuto: errore compilazione richiesta %s - %s", pratica.getPraticaId(), e.getMessage()));
 			}			
 		}
 	}
 	
-	public void annullaAiuto(List<String> praticheIds, Integer codiceBando) {
+	public void annullaAiuto(List<String> praticheIds) {
 		List<RegistrazioneAiuto> pratiche = repository.findByPraticheIds(praticheIds);
 		for(RegistrazioneAiuto pratica : pratiche) {
 			try {
 				Map<String, Object> contextMap = new HashMap<>(); 
-				contextMap.put("pratica", pratica);
+				contextMap.put("Cor", pratica.getCor());
 				contextMap.put("Notifica", "NO");
 				String contentString = velocityParser("templates/annulla-concessione.xml", contextMap);
 				String risposta = postRequest(contentString, "AnnullaConcessione");
@@ -107,35 +123,47 @@ public class RnaAiutiManager extends RnaManager {
 							pratica.getPraticaId(), esito.getCode(), esito.getMessage()));					
 				}
 			} catch (Exception e) {
-				logger.warn(String.format("annullaAiuto: errore compilazione richiesta %s - %s", pratica.getPraticaId(), e.getMessage()));
+				logger.error(String.format("annullaAiuto: errore compilazione richiesta %s - %s", pratica.getPraticaId(), e.getMessage()));
 			}			
 		}
 	}
 	
-	@Scheduled(cron = "0 00 03 * * ?")
+	@Scheduled(cron = "0 0/5 * * * ?")
 	public void inviaEsitoRichesta() {
-		List<RegistrazioneAiuto> pratiche = repository.findByRegistrazioneIdIsNotNullAndEsitoAiutoIsNull();
-		for(RegistrazioneAiuto pratica : pratiche) {
+		logger.info("inviaEsitoRichesta: init");
+		List<RichiestaRegistrazioneAiuto> list = richiestaRepository.findByEsitoRispostaIsNull();
+		for(RichiestaRegistrazioneAiuto richiesta : list) {
 			try {
 				Map<String, Object> contextMap = new HashMap<>();
-				contextMap.put("idRichiesta", pratica.getRegistrazioneId());
+				contextMap.put("idRichiesta", richiesta.getRichiestaId());
 				String contentString = velocityParser("templates/scarica-esito-richiesta.xml", contextMap);
 				String risposta = postRequest(contentString, "ScaricaEsitoRichiesta");
-				EsitoRichiestaAiuto esito = getEsito(risposta);
+				EsitoRichiesta esito = getEsitoRichiesta(risposta);
 				if(esito.isSuccess()) {
-					pratica.setEsitoAiuto(esito);
+					richiesta.setEsitoRisposta(esito);
+					List<EsitoRichiestaAiuto> esitiAiuto = getEsiti(risposta);
+					for(EsitoRichiestaAiuto esitoAiuto : esitiAiuto) {
+						RegistrazioneAiuto aiuto = repository.findByConcessioneGestoreId(esitoAiuto.getConcessioneGestoreId());
+						if(aiuto != null) {
+							aiuto.setEsitoAiuto(esitoAiuto);
+							aiuto.setCor(esitoAiuto.getCor());
+							repository.save(aiuto);
+						} else {
+							logger.warn(String.format("inviaEsitoRichesta: aiuto non trovato  %s", esitoAiuto.getConcessioneGestoreId()));										
+						}
+					}
 				} else {
 					logger.warn(String.format("inviaEsitoRichesta: errore invio richiesta  %s - %s - %s", 
-							pratica.getPraticaId(), esito.getCode(), esito.getMessage()));										
+							richiesta.getRichiestaId(), esito.getCode(), esito.getMessage()));										
 				}
-				repository.save(pratica);
+				richiestaRepository.save(richiesta);
 			} catch (Exception e) {
-				logger.warn(String.format("inviaEsitoRichesta: errore %s - %s", pratica.getPraticaId(), e.getMessage()));
-			}
+				logger.error(String.format("inviaEsitoRichesta: errore %s - %s", richiesta.getRichiestaId(), e.getMessage()));
+			}			
 		}
 	}
 	
-	private EsitoRichiestaAiuto getEsito(String content) {
+	private List<EsitoRichiestaAiuto> getEsiti(String content) {
 		//TODO estrazione esito richiesta aiuto
 		return null;
 	}

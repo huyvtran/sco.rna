@@ -1,25 +1,46 @@
 package it.smartcommunitylab.rna.beans;
 
+import java.time.LocalDate;
+
 import it.smartcommunitylab.rna.model.RegistrazioneAiuto.Stato;
 
 public class EsitoRichiestaAiuto {
-	private int code;
-	private String message;
-	private boolean success;	
-	private Long richiestaId;
+	private Integer cor;
+	private String concessioneGestoreId;
+	private LocalDate dataEsito;
+	private String codiceEsito;
+	private String descrizione;
 	private Stato stato;
 	
-	public Long getRichiestaId() {
-		return richiestaId;
+	public Integer getCor() {
+		return cor;
 	}
-	public void setRichiestaId(Long richiestaId) {
-		this.richiestaId = richiestaId;
+	public void setCor(Integer cor) {
+		this.cor = cor;
 	}
-	public String getMessage() {
-		return message;
+	public String getConcessioneGestoreId() {
+		return concessioneGestoreId;
 	}
-	public void setMessage(String message) {
-		this.message = message;
+	public void setConcessioneGestoreId(String concessioneGestoreId) {
+		this.concessioneGestoreId = concessioneGestoreId;
+	}
+	public LocalDate getDataEsito() {
+		return dataEsito;
+	}
+	public void setDataEsito(LocalDate dataEsito) {
+		this.dataEsito = dataEsito;
+	}
+	public String getCodiceEsito() {
+		return codiceEsito;
+	}
+	public void setCodiceEsito(String codiceEsito) {
+		this.codiceEsito = codiceEsito;
+	}
+	public String getDescrizione() {
+		return descrizione;
+	}
+	public void setDescrizione(String descrizione) {
+		this.descrizione = descrizione;
 	}
 	public Stato getStato() {
 		return stato;
@@ -27,16 +48,6 @@ public class EsitoRichiestaAiuto {
 	public void setStato(Stato stato) {
 		this.stato = stato;
 	}
-	public int getCode() {
-		return code;
-	}
-	public void setCode(int code) {
-		this.code = code;
-	}
-	public boolean isSuccess() {
-		return success;
-	}
-	public void setSuccess(boolean success) {
-		this.success = success;
-	}
+	
+	
 }

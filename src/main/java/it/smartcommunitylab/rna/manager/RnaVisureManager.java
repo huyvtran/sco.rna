@@ -54,7 +54,7 @@ public class RnaVisureManager extends RnaManager {
 				Map<String, Object> contextMap = new HashMap<>(); 
 				contextMap.put("visura", visura);
 				String contentString = velocityParser("templates/richiedi-visura-aiuti.xml", contextMap);
-				String risposta = postRequest(contentString, "RichiediVisure");
+				String risposta = postRequest(contentString, "RichiediVisuraAiuti");
 				EsitoRichiesta esito = getEsitoRichiesta(risposta);
 				if(esito.isSuccess()) {
 					visura.setEsito(esito);
@@ -68,7 +68,12 @@ public class RnaVisureManager extends RnaManager {
 				}
 			} catch (Exception e) {
 				logger.warn(String.format("inviaRichiesteVisuraAiuto: errore %s - %s", visura.getCf(), e.getMessage()));
-			}			
+			}
+			try {
+				Thread.sleep(4000);
+			} catch (InterruptedException e) {
+				logger.warn(String.format("inviaRichiesteVisuraAiuto: errore sleep %s", e.getMessage()));
+			}
 		}
 	}
 	
@@ -80,7 +85,7 @@ public class RnaVisureManager extends RnaManager {
 				Map<String, Object> contextMap = new HashMap<>(); 
 				contextMap.put("visura", visura);
 				String contentString = velocityParser("templates/richiedi-visura-deggendorf.xml", contextMap);
-				String risposta = postRequest(contentString, "RichiediVisure");
+				String risposta = postRequest(contentString, "RichiediVisuraDeggendorf");
 				EsitoRichiesta esito = getEsitoRichiesta(risposta);
 				if(esito.isSuccess()) {
 					visura.setEsito(esito);
@@ -94,6 +99,11 @@ public class RnaVisureManager extends RnaManager {
 				}
 			} catch (Exception e) {
 				logger.warn(String.format("inviaRichiesteVisuraDeggendorf: errore %s - %s", visura.getCf(), e.getMessage()));
+			}		
+			try {
+				Thread.sleep(4000);
+			} catch (InterruptedException e) {
+				logger.warn(String.format("inviaRichiesteVisuraDeggendorf: errore sleep %s", e.getMessage()));
 			}			
 		}
 	}

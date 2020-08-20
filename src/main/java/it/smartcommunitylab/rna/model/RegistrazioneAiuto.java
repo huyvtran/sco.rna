@@ -24,7 +24,11 @@ public class RegistrazioneAiuto {
 	
 	private String praticaId;
 	private String cf;
-	private Long registrazioneId;
+	private String concessioneGestoreId;
+	private Integer cor;
+	private LocalDate dataConcessione;
+	private String attoConcessione;
+	
 	private EsitoRichiesta esitoRegistrazione;
 	private EsitoRichiestaAiuto esitoAiuto;
 	
@@ -62,12 +66,6 @@ public class RegistrazioneAiuto {
 	public void setDataConferma(LocalDate dataConferma) {
 		this.dataConferma = dataConferma;
 	}
-	public Long getRegistrazioneId() {
-		return registrazioneId;
-	}
-	public void setRegistrazioneId(Long registrazioneId) {
-		this.registrazioneId = registrazioneId;
-	}
 	public EsitoRichiesta getEsitoRegistrazione() {
 		return esitoRegistrazione;
 	}
@@ -97,6 +95,30 @@ public class RegistrazioneAiuto {
 	}
 	public void setEsitoAiuto(EsitoRichiestaAiuto esitoAiuto) {
 		this.esitoAiuto = esitoAiuto;
+	}
+	public String getConcessioneGestoreId() {
+		return concessioneGestoreId;
+	}
+	public void setConcessioneGestoreId(String concessioneGestoreId) {
+		this.concessioneGestoreId = concessioneGestoreId;
+	}
+	public Integer getCor() {
+		return cor;
+	}
+	public void setCor(Integer cor) {
+		this.cor = cor;
+	}
+	public LocalDate getDataConcessione() {
+		return dataConcessione;
+	}
+	public void setDataConcessione(LocalDate dataConcessione) {
+		this.dataConcessione = dataConcessione;
+	}
+	public String getAttoConcessione() {
+		return attoConcessione;
+	}
+	public void setAttoConcessione(String attoConcessione) {
+		this.attoConcessione = attoConcessione;
 	}
 	
 }

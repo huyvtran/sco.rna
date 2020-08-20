@@ -40,7 +40,7 @@ import org.xml.sax.SAXException;
 
 import it.smartcommunitylab.rna.beans.EsitoRichiesta;
 import it.smartcommunitylab.rna.common.Utils;
-import it.smartcommunitylab.rna.exception.ParseErrorException;
+import it.smartcommunitylab.rna.exception.ServiceErrorException;
 
 @Component
 public class RnaManager {
@@ -130,7 +130,7 @@ public class RnaManager {
 			return result;
 		} catch (Exception e) {
 			logger.error("velocityParser error: " + e.getClass() + " " + e.getMessage());
-			throw new ParseErrorException(e.getMessage());
+			throw new ServiceErrorException(e.getMessage());
 		}
 	}
 	
