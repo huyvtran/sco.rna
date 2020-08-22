@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 
 import it.smartcommunitylab.rna.beans.EsitoRichiesta;
 import it.smartcommunitylab.rna.model.VisuraAiuto;
@@ -16,6 +17,7 @@ import it.smartcommunitylab.rna.model.VisuraDeggendorf;
 import it.smartcommunitylab.rna.repository.VisuraAiutoRepository;
 import it.smartcommunitylab.rna.repository.VisuraDeggendorfRepository;
 
+@Component
 public class RnaVisureManager extends RnaManager {
 	private static final transient Logger logger = LoggerFactory.getLogger(RnaVisureManager.class);
 	
@@ -127,10 +129,10 @@ public class RnaVisureManager extends RnaManager {
 						visuraAiutoRepository.save(visura);
 					} else {
 						logger.warn(String.format("downloadVisuraAiuto: errore esecuzione richiesta  %s - %s - %s", 
-								esito.getEntityId(), esito.getCode(), esito.getMessage()));
+								visura.getCf(), esito.getCode(), esito.getMessage()));
 					}
 				} else {
-					logger.warn(String.format("downloadVisuraAiuto: errore invio richiesta  %s - %s", esito.getEntityId(), esito.getMessage()));
+					logger.warn(String.format("downloadVisuraAiuto: errore invio richiesta  %s - %s", visura.getCf(), esito.getMessage()));
 				}
 			} catch (Exception e) {
 				logger.warn(String.format("downloadVisuraAiuto: errore %s - %s", visura.getCf(), e.getMessage()));
@@ -157,10 +159,10 @@ public class RnaVisureManager extends RnaManager {
 						visuraDeggendorfRepository.save(visura);
 					} else {
 						logger.warn(String.format("downloadVisuraDeggendorf: errore esecuzione richiesta  %s - %s - %s", 
-								esito.getEntityId(), esito.getCode(), esito.getMessage()));
+								visura.getCf(), esito.getCode(), esito.getMessage()));
 					}
 				} else {
-					logger.warn(String.format("downloadVisuraDeggendorf: errore invio richiesta  %s - %s", esito.getEntityId(), esito.getMessage()));
+					logger.warn(String.format("downloadVisuraDeggendorf: errore invio richiesta  %s - %s", visura.getCf(), esito.getMessage()));
 				}
 			} catch (Exception e) {
 				logger.warn(String.format("downloadVisuraDeggendorf: errore %s - %s", visura.getCf(), e.getMessage()));

@@ -1,0 +1,115 @@
+#[[<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<INVIO xmlns="http://www.rna.gov.it/invio" xmlns:ns2="http://www.rna.gov.it/concessione" xmlns:ns3="http://www.rna.gov.it/beneficiario" xmlns:ns4="http://www.rna.gov.it/localizzazione" xmlns:ns5="http://www.rna.gov.it/costo" xmlns:ns6="http://www.rna.gov.it/componente_aiuto" xmlns:ns7="http://www.rna.gov.it/strumento_aiuto" xmlns:ns8="http://www.rna.gov.it/agevolazioni_erogate_restituite" xmlns:ns9="http://www.rna.gov.it/rendicontazione" xmlns:ns10="http://www.rna.gov.it/rendicontazione_dettaglio" xmlns:ns11="http://www.rna.gov.it/info_cup" xmlns:ns12="http://www.rna.gov.it/esito_richiesta" xmlns:ns13="http://www.rna.gov.it/output_richiesta" xmlns:ns14="http://www.rna.gov.it/sogg_aiuti_degg">
+    <COD_BANDO>8726</COD_BANDO>
+    <NOTIFICA_ELABORAZIONE_RICHIESTA>NO</NOTIFICA_ELABORAZIONE_RICHIESTA>
+    <CONCESSIONI>
+        <CONCESSIONE>
+            <ns2:TITOLO_PROGETTO>progetto test RQ_7586</ns2:TITOLO_PROGETTO>
+            <ns2:DESCRIZIONE_PROGETTO>progetto test RQ</ns2:DESCRIZIONE_PROGETTO>
+            <ns2:COD_TIPO_INIZIATIVA>07.05</ns2:COD_TIPO_INIZIATIVA>
+            <ns2:CUP_CHECK_RICHIESTA>3</ns2:CUP_CHECK_RICHIESTA>
+            <ns2:CUP>G87I20000020007</ns2:CUP>
+            <ns2:DATA_DOMANDA>2020-04-01+02:00</ns2:DATA_DOMANDA>
+            <ns2:DATA_INIZIO_PROGETTO>2020-05-01+02:00</ns2:DATA_INIZIO_PROGETTO>
+            <ns2:DATA_FINE_PROGETTO>2020-09-19+02:00</ns2:DATA_FINE_PROGETTO>
+            <ns2:LINK_TRASPARENZA>https://www.trasp.it</ns2:LINK_TRASPARENZA>
+            <ns2:ID_CONCESSIONE_GEST>Id_aiuto_1_test_7586</ns2:ID_CONCESSIONE_GEST>
+            <ns2:FLAG_ATTO_CONCESSIONE>SI</ns2:FLAG_ATTO_CONCESSIONE>
+            <ns2:DATA_CONCESSIONE>2020-06-11</ns2:DATA_CONCESSIONE>
+            <ns2:CODICE_LOCALE_PROGETTO>id_local_1</ns2:CODICE_LOCALE_PROGETTO>
+            <ns2:NOTE_CONCESSIONE>note</ns2:NOTE_CONCESSIONE>
+            <ns2:BENEFICIARIO>
+                <ns3:COD_TIPO_SOGGETTO>1</ns3:COD_TIPO_SOGGETTO>
+                <ns3:CODICE_FISCALE>CTLNGL68L45A462B</ns3:CODICE_FISCALE>
+                <ns3:DENOMINAZIONE>CATALUCCI ANGELA</ns3:DENOMINAZIONE>
+                <ns3:FINE_ESERCIZIO_FINANZIARIO>3112</ns3:FINE_ESERCIZIO_FINANZIARIO>
+                <ns3:COD_DIMENSIONE_IMPRESA>3</ns3:COD_DIMENSIONE_IMPRESA>
+                <ns3:COD_TIPO_ATTIVITA_PREVALENTE>01.5</ns3:COD_TIPO_ATTIVITA_PREVALENTE>
+                <ns3:COD_FORMA_GIURIDICA>DI</ns3:COD_FORMA_GIURIDICA>
+                <ns3:SEDE_LEGALE>
+                    <ns3:INDIRIZZO>FRAZIONE CAGNANO 39</ns3:INDIRIZZO>
+                    <ns3:COD_NAZIONE>000</ns3:COD_NAZIONE>
+                    <ns3:COD_COMUNE>044001</ns3:COD_COMUNE>
+                    <ns3:COMUNE>Acquasanta Terme</ns3:COMUNE>
+                    <ns3:CAP>63095</ns3:CAP>
+                </ns3:SEDE_LEGALE>
+            </ns2:BENEFICIARIO>
+            <ns2:LOCALIZZAZIONI>
+                <ns2:LOCALIZZAZIONE>
+                    <ns4:ID_LOCA_GEST>id_localizzazione 1</ns4:ID_LOCA_GEST>
+                    <ns4:COD_REGIONE>ITI3</ns4:COD_REGIONE>
+                    <ns4:CHECK_LOCALIZZAZIONE>SI</ns4:CHECK_LOCALIZZAZIONE>
+                    <ns4:COD_COMUNE>044001</ns4:COD_COMUNE>
+                    <ns4:CAP>63095</ns4:CAP>
+                    <ns4:INDIRIZZO>FRAZIONE CAGNANO 39</ns4:INDIRIZZO>
+                </ns2:LOCALIZZAZIONE>
+            </ns2:LOCALIZZAZIONI>
+            <ns2:COSTI>
+                <ns2:COSTO>
+                    <ns5:ID_COSTO_GEST>Id_costo_2</ns5:ID_COSTO_GEST>
+                    <ns5:COD_TIPO_COSTO>3</ns5:COD_TIPO_COSTO>
+                    <ns5:IMPORTO_AMMESSO>100.0</ns5:IMPORTO_AMMESSO>
+                </ns2:COSTO>
+                <ns2:COSTO>
+                    <ns5:ID_COSTO_GEST>Id_costo_3</ns5:ID_COSTO_GEST>
+                    <ns5:COD_TIPO_COSTO>11</ns5:COD_TIPO_COSTO>
+                    <ns5:IMPORTO_AMMESSO>10.0</ns5:IMPORTO_AMMESSO>
+                </ns2:COSTO>
+                <ns2:COSTO>
+                    <ns5:ID_COSTO_GEST>Id_costo_1</ns5:ID_COSTO_GEST>
+                    <ns5:COD_TIPO_COSTO>2</ns5:COD_TIPO_COSTO>
+                    <ns5:IMPORTO_AMMESSO>100.0</ns5:IMPORTO_AMMESSO>
+                </ns2:COSTO>
+            </ns2:COSTI>
+            <ns2:COMPONENTI_AIUTI>
+                <ns2:COMPONENTE_AIUTO>
+                    <ns6:ID_COMP_AIUTO_GEST>id comp 1</ns6:ID_COMP_AIUTO_GEST>
+                    <ns6:DESCR_BREVE>componente di aiuto 1</ns6:DESCR_BREVE>
+                    <ns6:COD_TIPO_PROCEDIMENTO>2</ns6:COD_TIPO_PROCEDIMENTO>
+                    <ns6:CODICE_REGOLAMENTO>CE1863-3.1/20</ns6:CODICE_REGOLAMENTO>
+                    <ns6:COD_OBIETTIVO>612200</ns6:COD_OBIETTIVO>
+                    <ns6:CODICE_SETTORE>NS</ns6:CODICE_SETTORE>
+                    <ns6:CUMULABILITA>1</ns6:CUMULABILITA>
+                    <ns6:FLAG_CE>NO</ns6:FLAG_CE>
+                    <ns6:COD_ATECO_LIST>
+                        <ns6:COD_ATECO>47.64.20</ns6:COD_ATECO>
+                    </ns6:COD_ATECO_LIST>
+                    <ns6:STRUMENTI_AIUTO>
+                        <ns6:STRUMENTO_AIUTO>
+                            <ns7:ID_STRUM_AIUTO_GEST>Id-strum_1</ns7:ID_STRUM_AIUTO_GEST>
+                            <ns7:COD_TIPO_STRUMENTO_AIUTO>37</ns7:COD_TIPO_STRUMENTO_AIUTO>
+                            <ns7:IMPORTO_NOMINALE>10.0</ns7:IMPORTO_NOMINALE>
+                            <ns7:IMPORTO_AGEVOLAZIONE>10.0</ns7:IMPORTO_AGEVOLAZIONE>
+                        </ns6:STRUMENTO_AIUTO>
+                    </ns6:STRUMENTI_AIUTO>
+                    <ns6:AGEVOLAZIONI_EROGATE_RESTITUITE/>
+                </ns2:COMPONENTE_AIUTO>
+                <ns2:COMPONENTE_AIUTO>
+                    <ns6:ID_COMP_AIUTO_GEST>id comp 2</ns6:ID_COMP_AIUTO_GEST>
+                    <ns6:DESCR_BREVE>componente di aiuto 2</ns6:DESCR_BREVE>
+                    <ns6:COD_TIPO_PROCEDIMENTO>2</ns6:COD_TIPO_PROCEDIMENTO>
+                    <ns6:CODICE_REGOLAMENTO>CE1863-3.2/20</ns6:CODICE_REGOLAMENTO>
+                    <ns6:COD_OBIETTIVO>622200</ns6:COD_OBIETTIVO>
+                    <ns6:CODICE_SETTORE>NS</ns6:CODICE_SETTORE>
+                    <ns6:CODICE_SIEG>4</ns6:CODICE_SIEG>
+                    <ns6:CUMULABILITA>1</ns6:CUMULABILITA>
+                    <ns6:FLAG_CE>NO</ns6:FLAG_CE>
+                    <ns6:COD_ATECO_LIST>
+                        <ns6:COD_ATECO>47.82.01</ns6:COD_ATECO>
+                    </ns6:COD_ATECO_LIST>
+                    <ns6:STRUMENTI_AIUTO>
+                        <ns6:STRUMENTO_AIUTO>
+                            <ns7:ID_STRUM_AIUTO_GEST>Id-strum_2</ns7:ID_STRUM_AIUTO_GEST>
+                            <ns7:COD_TIPO_STRUMENTO_AIUTO>3</ns7:COD_TIPO_STRUMENTO_AIUTO>
+                            <ns7:IMPORTO_NOMINALE>50.0</ns7:IMPORTO_NOMINALE>
+                            <ns7:IMPORTO_AGEVOLAZIONE>50.0</ns7:IMPORTO_AGEVOLAZIONE>
+                            <ns7:INTENSITA_AIUTO>20.0</ns7:INTENSITA_AIUTO>
+                        </ns6:STRUMENTO_AIUTO>
+                    </ns6:STRUMENTI_AIUTO>
+                    <ns6:AGEVOLAZIONI_EROGATE_RESTITUITE/>
+                </ns2:COMPONENTE_AIUTO>
+            </ns2:COMPONENTI_AIUTI>
+            <ns2:COD_STATO_CONCESSIONE>4</ns2:COD_STATO_CONCESSIONE>
+        </CONCESSIONE>
+    </CONCESSIONI>
+</INVIO>]]#

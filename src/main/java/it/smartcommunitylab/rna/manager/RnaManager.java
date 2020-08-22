@@ -3,23 +3,23 @@ package it.smartcommunitylab.rna.manager;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.io.Writer;
-import java.net.URL;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
-import javax.net.ssl.HttpsURLConnection;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.auth.BasicScheme;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
@@ -55,14 +55,8 @@ public class RnaManager {
 	@Value("${rna.password}")
 	private String password;
 	
-	private String authHeaderValue;
-	
 	@PostConstruct
-	public void init() throws Exception {
-    String auth = user + ":" + password;
-    String encodedAuth = Base64.getEncoder().encodeToString(auth.getBytes(StandardCharsets.UTF_8));
-    authHeaderValue = "Basic " + encodedAuth;
-	}
+	public void init() throws Exception {}
 	
 	protected DocumentBuilder getDocumentBuilder() throws ParserConfigurationException {
 		// Create document parser 
@@ -81,35 +75,30 @@ public class RnaManager {
 	}
 	
 	protected String postRequest(String contentString, String action) throws Exception {
-		URL url = new URL(endpoint);
-		HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
-		conn.setRequestMethod("POST");
-		conn.setDoOutput(true);
-		conn.setDoInput(true);
-		conn.setRequestProperty("Content-Type", "text/xml;charset=UTF-8");
-		conn.setRequestProperty("SOAPAction", action);
-		conn.setRequestProperty("Authorization", authHeaderValue);
-		
-		OutputStream out = conn.getOutputStream();
-		Writer writer = new OutputStreamWriter(out, "UTF-8");
-		writer.write(contentString);
-		writer.close();
-		out.close();		
+		CloseableHttpClient client = HttpClients.createDefault();
+		HttpPost httpPost = new HttpPost(endpoint);
+    UsernamePasswordCredentials creds = new UsernamePasswordCredentials(user, password);
+    httpPost.addHeader(new BasicScheme().authenticate(creds, httpPost, null));
+    //httpPost.addHeader("SOAPAction", action);  
+    httpPost.addHeader("Content-Type", "text/xml;charset=UTF-8");
+    StringEntity entity = new StringEntity(contentString);
+    httpPost.setEntity(entity);    	
 
-		int responseCode = conn.getResponseCode();
-		if (responseCode >= 300) {
-			throw new RuntimeException("Failed : HTTP error code : " + conn.getResponseCode());
-		}
+    CloseableHttpResponse response = client.execute(httpPost);
 		BufferedReader br = new BufferedReader(
-				new InputStreamReader((conn.getInputStream()), Charset.defaultCharset()));
-		StringBuffer response = new StringBuffer();
+				new InputStreamReader(response.getEntity().getContent(), Charset.forName("UTF-8")));
+		StringBuffer responseBody = new StringBuffer();
 		String output = null;
 		while ((output = br.readLine()) != null) {
-			response.append(output);
+			responseBody.append(output);
 		}
-		conn.disconnect();
-		String res = new String(response.toString().getBytes(), Charset.forName("UTF-8"));
-		return res;
+		client.close();
+    int statusCode = response.getStatusLine().getStatusCode();
+		if (statusCode >= 300) {
+			logger.info(String.format("postRequest error:%s - %s", statusCode, responseBody.toString()));
+			throw new RuntimeException("Failed : HTTP error code : " + statusCode);
+		}    
+		return responseBody.toString();		
 	}
 	
 	protected String velocityParser(String template, Map<String, Object> contextMap) throws Exception {

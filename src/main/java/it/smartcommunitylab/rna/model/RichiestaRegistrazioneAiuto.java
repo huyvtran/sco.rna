@@ -11,7 +11,7 @@ public class RichiestaRegistrazioneAiuto {
 	@Id
 	private String id;
 	
-	private Integer codiceBando;
+	private Long codiceBando;
 	private Long richiestaId;
 	private EsitoRichiesta esitoRegistrazione;
 	private EsitoRichiesta esitoRisposta;
@@ -28,10 +28,10 @@ public class RichiestaRegistrazioneAiuto {
 	public void setEsitoRegistrazione(EsitoRichiesta esitoRegistrazione) {
 		this.esitoRegistrazione = esitoRegistrazione;
 	}
-	public Integer getCodiceBando() {
+	public Long getCodiceBando() {
 		return codiceBando;
 	}
-	public void setCodiceBando(Integer codiceBando) {
+	public void setCodiceBando(Long codiceBando) {
 		this.codiceBando = codiceBando;
 	}
 	public EsitoRichiesta getEsitoRisposta() {

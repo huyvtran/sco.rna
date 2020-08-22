@@ -2,6 +2,7 @@ package it.smartcommunitylab.rna.manager;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 
 import it.smartcommunitylab.rna.beans.ConfermaConcessione;
 import it.smartcommunitylab.rna.beans.EsitoRichiesta;
@@ -20,11 +22,13 @@ import it.smartcommunitylab.rna.model.RichiestaRegistrazioneAiuto;
 import it.smartcommunitylab.rna.repository.RegistrazioneAiutoRepository;
 import it.smartcommunitylab.rna.repository.RichiestaRegistrazioneAiutoRepository;
 
+@Component
 public class RnaAiutiManager extends RnaManager {
 	private static final transient Logger logger = LoggerFactory.getLogger(RnaAiutiManager.class);
 	
 	@Autowired
 	private RegistrazioneAiutoRepository repository;
+	@Autowired
 	private RichiestaRegistrazioneAiutoRepository richiestaRepository;
 	
 	public List<RegistrazioneAiuto> getRegistrazioneAiuto(List<String> praticheIds) {
@@ -33,7 +37,7 @@ public class RnaAiutiManager extends RnaManager {
 		return pratiche;
 	}
 	
-	public void addRegistrazioneAiuto(List<RegistrazioneAiuto> pratiche, Integer codiceBando) throws Exception {
+	public void addRegistrazioneAiuto(List<RegistrazioneAiuto> pratiche, Long codiceBando) throws Exception {
 		List<RegistrazioneAiuto> nuovePratiche = new ArrayList<>();
 		for(RegistrazioneAiuto pratica : pratiche) {
 			RegistrazioneAiuto praticaDb = repository.findByPraticaId(pratica.getPraticaId());
@@ -51,13 +55,15 @@ public class RnaAiutiManager extends RnaManager {
 		inviaRichiesteAiuto(nuovePratiche, codiceBando);
 	}
 	
-	private void inviaRichiesteAiuto(List<RegistrazioneAiuto> pratiche, Integer codiceBando) throws Exception {
+	private void inviaRichiesteAiuto(List<RegistrazioneAiuto> pratiche, Long codiceBando) throws Exception {
 		RichiestaRegistrazioneAiuto richiesta = new RichiestaRegistrazioneAiuto();
 		richiesta.setCodiceBando(codiceBando);
 		try {
 			Map<String, Object> contextMap = new HashMap<>(); 
 			contextMap.put("pratiche", pratiche);
 			contextMap.put("codiceBando", codiceBando);
+			String attachString = velocityParser("templates/registra-aiuto-attach.xml", contextMap);
+			contextMap.put("attach", Base64.getEncoder().encodeToString(attachString.getBytes()));
 			String contentString = velocityParser("templates/registra-aiuto.xml", contextMap);
 			String risposta = postRequest(contentString, "RegistraAiuto");
 			EsitoRichiesta esito = getEsitoRichiesta(risposta);
@@ -73,6 +79,7 @@ public class RnaAiutiManager extends RnaManager {
 				throw new ServiceErrorException(esito.getCode() + " - " + esito.getMessage());
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			logger.error(String.format("inviaRichiesteAiuto: errore compilazione richiesta %s", e.getMessage()));
 			throw new ServiceErrorException(e.getMessage());
 		}
@@ -128,11 +135,25 @@ public class RnaAiutiManager extends RnaManager {
 		}
 	}
 	
-	@Scheduled(cron = "0 0/5 * * * ?")
+	@Scheduled(cron = "0,30 * * * * ?")
 	public void inviaEsitoRichesta() {
 		logger.info("inviaEsitoRichesta: init");
 		List<RichiestaRegistrazioneAiuto> list = richiestaRepository.findByEsitoRispostaIsNull();
 		for(RichiestaRegistrazioneAiuto richiesta : list) {
+			try {
+				Map<String, Object> contextMap = new HashMap<>();
+				contextMap.put("idRichiesta", richiesta.getRichiestaId());
+				String contentString = velocityParser("templates/stato-richiesta.xml", contextMap);
+				String risposta = postRequest(contentString, "StatoRichiesta");
+				EsitoRichiesta esito = getEsitoRichiesta(risposta);
+				if(!esito.isSuccess() || (esito.getCode() > 0) || !isStatoRichiestaCompletato(risposta)) {
+					logger.warn(String.format("inviaEsitoRichesta: errore elaborazione stato richiesta %s - %s - %s", 
+							richiesta.getRichiestaId(), esito.getCode(), esito.getMessage()));
+					continue;
+				}
+			} catch (Exception e) {
+				logger.warn(String.format("inviaEsitoRichesta: errore invio stato richiesta %s - %s", richiesta.getRichiestaId(), e.getMessage()));
+			}
 			try {
 				Map<String, Object> contextMap = new HashMap<>();
 				contextMap.put("idRichiesta", richiesta.getRichiestaId());
@@ -166,5 +187,10 @@ public class RnaAiutiManager extends RnaManager {
 	private List<EsitoRichiestaAiuto> getEsiti(String content) {
 		//TODO estrazione esito richiesta aiuto
 		return null;
+	}
+	
+	private boolean isStatoRichiestaCompletato(String content) {
+		//TODO estrazione stato richiesta
+		return false;
 	}
 }
