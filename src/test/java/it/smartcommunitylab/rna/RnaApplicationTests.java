@@ -4,6 +4,7 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.UUID;
 
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
@@ -26,6 +27,9 @@ class RnaApplicationTests {
 	void addRichiestaAiuto() throws Exception {
 		List<RegistrazioneAiuto> pratiche = new ArrayList<>();
 		RegistrazioneAiuto aiuto = new RegistrazioneAiuto();
+		String id = UUID.randomUUID().toString();
+		aiuto.setConcessioneGestoreId(id);
+		aiuto.setPraticaId(id);
 		pratiche.add(aiuto);
 		aiutiManager.addRegistrazioneAiuto(pratiche, Long.valueOf(8726));
 	}

@@ -25,7 +25,8 @@ public class RegistrazioneAiuto {
 	private String praticaId;
 	private String cf;
 	private String concessioneGestoreId;
-	private Integer cor;
+	private Long codiceBando;
+	private Long cor;
 	private LocalDate dataConcessione;
 	private String attoConcessione;
 	
@@ -102,10 +103,10 @@ public class RegistrazioneAiuto {
 	public void setConcessioneGestoreId(String concessioneGestoreId) {
 		this.concessioneGestoreId = concessioneGestoreId;
 	}
-	public Integer getCor() {
+	public Long getCor() {
 		return cor;
 	}
-	public void setCor(Integer cor) {
+	public void setCor(Long cor) {
 		this.cor = cor;
 	}
 	public LocalDate getDataConcessione() {
@@ -119,6 +120,12 @@ public class RegistrazioneAiuto {
 	}
 	public void setAttoConcessione(String attoConcessione) {
 		this.attoConcessione = attoConcessione;
+	}
+	public Long getCodiceBando() {
+		return codiceBando;
+	}
+	public void setCodiceBando(Long codiceBando) {
+		this.codiceBando = codiceBando;
 	}
 	
 }

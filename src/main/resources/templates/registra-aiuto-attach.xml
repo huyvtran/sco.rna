@@ -1,21 +1,20 @@
-#[[<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <INVIO xmlns="http://www.rna.gov.it/invio" xmlns:ns2="http://www.rna.gov.it/concessione" xmlns:ns3="http://www.rna.gov.it/beneficiario" xmlns:ns4="http://www.rna.gov.it/localizzazione" xmlns:ns5="http://www.rna.gov.it/costo" xmlns:ns6="http://www.rna.gov.it/componente_aiuto" xmlns:ns7="http://www.rna.gov.it/strumento_aiuto" xmlns:ns8="http://www.rna.gov.it/agevolazioni_erogate_restituite" xmlns:ns9="http://www.rna.gov.it/rendicontazione" xmlns:ns10="http://www.rna.gov.it/rendicontazione_dettaglio" xmlns:ns11="http://www.rna.gov.it/info_cup" xmlns:ns12="http://www.rna.gov.it/esito_richiesta" xmlns:ns13="http://www.rna.gov.it/output_richiesta" xmlns:ns14="http://www.rna.gov.it/sogg_aiuti_degg">
-    <COD_BANDO>8726</COD_BANDO>
+    <COD_BANDO>$codiceBando</COD_BANDO>
     <NOTIFICA_ELABORAZIONE_RICHIESTA>NO</NOTIFICA_ELABORAZIONE_RICHIESTA>
     <CONCESSIONI>
+    		#foreach($pratica in $pratiche)
         <CONCESSIONE>
             <ns2:TITOLO_PROGETTO>progetto test RQ_7586</ns2:TITOLO_PROGETTO>
             <ns2:DESCRIZIONE_PROGETTO>progetto test RQ</ns2:DESCRIZIONE_PROGETTO>
             <ns2:COD_TIPO_INIZIATIVA>07.05</ns2:COD_TIPO_INIZIATIVA>
             <ns2:CUP_CHECK_RICHIESTA>3</ns2:CUP_CHECK_RICHIESTA>
-            <ns2:CUP>G87I20000020007</ns2:CUP>
-            <ns2:DATA_DOMANDA>2020-04-01+02:00</ns2:DATA_DOMANDA>
+            <ns2:CUP>G87I20000020007</ns2:CUP>            
             <ns2:DATA_INIZIO_PROGETTO>2020-05-01+02:00</ns2:DATA_INIZIO_PROGETTO>
-            <ns2:DATA_FINE_PROGETTO>2020-09-19+02:00</ns2:DATA_FINE_PROGETTO>
-            <ns2:LINK_TRASPARENZA>https://www.trasp.it</ns2:LINK_TRASPARENZA>
-            <ns2:ID_CONCESSIONE_GEST>Id_aiuto_1_test_7586</ns2:ID_CONCESSIONE_GEST>
+            <ns2:DATA_FINE_PROGETTO>2020-12-31+02:00</ns2:DATA_FINE_PROGETTO>
+            <ns2:ID_CONCESSIONE_GEST>$pratica.concessioneGestoreId</ns2:ID_CONCESSIONE_GEST>
             <ns2:FLAG_ATTO_CONCESSIONE>SI</ns2:FLAG_ATTO_CONCESSIONE>
-            <ns2:DATA_CONCESSIONE>2020-06-11</ns2:DATA_CONCESSIONE>
+            <ns2:DATA_CONCESSIONE>2020-09-11+02:00</ns2:DATA_CONCESSIONE>
             <ns2:CODICE_LOCALE_PROGETTO>id_local_1</ns2:CODICE_LOCALE_PROGETTO>
             <ns2:NOTE_CONCESSIONE>note</ns2:NOTE_CONCESSIONE>
             <ns2:BENEFICIARIO>
@@ -111,5 +110,6 @@
             </ns2:COMPONENTI_AIUTI>
             <ns2:COD_STATO_CONCESSIONE>4</ns2:COD_STATO_CONCESSIONE>
         </CONCESSIONE>
+        #end
     </CONCESSIONI>
-</INVIO>]]#
+</INVIO>

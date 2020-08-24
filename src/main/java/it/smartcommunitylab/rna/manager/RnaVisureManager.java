@@ -57,7 +57,7 @@ public class RnaVisureManager extends RnaManager {
 				contextMap.put("visura", visura);
 				String contentString = velocityParser("templates/richiedi-visura-aiuti.xml", contextMap);
 				String risposta = postRequest(contentString, "RichiediVisuraAiuti");
-				EsitoRichiesta esito = getEsitoRichiesta(risposta);
+				EsitoRichiesta esito = getEsitoRichiesta(risposta, "???");
 				if(esito.isSuccess()) {
 					visura.setEsito(esito);
 					if(esito.getCode() <= 0) {
@@ -88,7 +88,7 @@ public class RnaVisureManager extends RnaManager {
 				contextMap.put("visura", visura);
 				String contentString = velocityParser("templates/richiedi-visura-deggendorf.xml", contextMap);
 				String risposta = postRequest(contentString, "RichiediVisuraDeggendorf");
-				EsitoRichiesta esito = getEsitoRichiesta(risposta);
+				EsitoRichiesta esito = getEsitoRichiesta(risposta, "???");
 				if(esito.isSuccess()) {
 					visura.setEsito(esito);
 					if(esito.getCode() <= 0) {
@@ -120,7 +120,7 @@ public class RnaVisureManager extends RnaManager {
 				contextMap.put("outputVisura", "PDF");
 				String contentString = velocityParser("templates/scarica-visura.xml", contextMap);
 				String risposta = postRequest(contentString, "ScaricaVisura");
-				EsitoRichiesta esito = getEsitoRichiesta(risposta);
+				EsitoRichiesta esito = getEsitoRichiesta(risposta, "???");
 				if(esito.isSuccess()) {
 					if(esito.getCode() <= 0) {
 						Binary file = getFile(risposta, "Visura");
@@ -150,7 +150,7 @@ public class RnaVisureManager extends RnaManager {
 				contextMap.put("outputVisura", "PDF");
 				String contentString = velocityParser("templates/scarica-visura.xml", contextMap);
 				String risposta = postRequest(contentString, "ScaricaVisura");
-				EsitoRichiesta esito = getEsitoRichiesta(risposta);
+				EsitoRichiesta esito = getEsitoRichiesta(risposta, "???");
 				if(esito.isSuccess()) {
 					if(esito.getCode() <= 0) {
 						Binary file = getFile(risposta, "Visura");

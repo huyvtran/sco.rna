@@ -1,21 +1,22 @@
 package it.smartcommunitylab.rna.beans;
 
-import java.time.LocalDate;
+import java.util.Date;
 
 import it.smartcommunitylab.rna.model.RegistrazioneAiuto.Stato;
 
 public class EsitoRichiestaAiuto {
-	private Integer cor;
+	private Long cor;
 	private String concessioneGestoreId;
-	private LocalDate dataEsito;
+	private Date dataEsito;
 	private String codiceEsito;
 	private String descrizione;
 	private Stato stato;
+	private String msgOriginario;
 	
-	public Integer getCor() {
+	public Long getCor() {
 		return cor;
 	}
-	public void setCor(Integer cor) {
+	public void setCor(Long cor) {
 		this.cor = cor;
 	}
 	public String getConcessioneGestoreId() {
@@ -24,10 +25,10 @@ public class EsitoRichiestaAiuto {
 	public void setConcessioneGestoreId(String concessioneGestoreId) {
 		this.concessioneGestoreId = concessioneGestoreId;
 	}
-	public LocalDate getDataEsito() {
+	public Date getDataEsito() {
 		return dataEsito;
 	}
-	public void setDataEsito(LocalDate dataEsito) {
+	public void setDataEsito(Date dataEsito) {
 		this.dataEsito = dataEsito;
 	}
 	public String getCodiceEsito() {
@@ -47,6 +48,12 @@ public class EsitoRichiestaAiuto {
 	}
 	public void setStato(Stato stato) {
 		this.stato = stato;
+	}
+	public String getMsgOriginario() {
+		return msgOriginario;
+	}
+	public void setMsgOriginario(String msgOriginario) {
+		this.msgOriginario = msgOriginario;
 	}
 	
 	

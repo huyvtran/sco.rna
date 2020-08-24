@@ -1,0 +1,8 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:web="http://webServices.raseWeb.rase.rnas.infocamere.it/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <web:StatoRichiesta>
+         <idRichiesta>$idRichiesta</idRichiesta>
+      </web:StatoRichiesta>
+   </soapenv:Body>
+</soapenv:Envelope>

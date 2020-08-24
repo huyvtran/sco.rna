@@ -35,6 +35,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.ls.DOMImplementationLS;
+import org.w3c.dom.ls.LSSerializer;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -123,9 +125,33 @@ public class RnaManager {
 		}
 	}
 	
-	protected EsitoRichiesta getEsitoRichiesta(String content) {
-		//TODO estrazione risultato richiesta
-		return new EsitoRichiesta();
+	protected EsitoRichiesta getEsitoRichiesta(String content, String resultTagName) throws Exception {
+		Document document = getDocument(content);
+		NodeList nodeList = document.getElementsByTagNameNS("*", resultTagName);
+		if(nodeList.getLength() > 0) {
+			EsitoRichiesta esito = new EsitoRichiesta();
+			Element esitoElement = (Element) nodeList.item(0);
+			NodeList elements = esitoElement.getChildNodes();
+			for(int i=0; i<elements.getLength(); i++) {
+				Element element = (Element) elements.item(i);
+				switch (element.getTagName()) {
+					case "retCode":
+						esito.setCode(Integer.valueOf(getStringDataFromElement(element)));
+						break;
+					case "retMessage":
+						esito.setMessage(getStringDataFromElement(element));
+						break;
+					case "success":
+						esito.setSuccess(Boolean.valueOf(getStringDataFromElement(element)));
+						break;
+					case "idRichiesta":
+						esito.setRichiestaId(Long.valueOf(getStringDataFromElement(element)));
+						break;
+				}
+			}
+			return esito;
+		}
+		throw new ServiceErrorException("ESITO not found");
 	}
 	
 	protected Binary getFile(String content, String tag) throws Exception {
@@ -141,6 +167,15 @@ public class RnaManager {
 		return null;
 	}
 	
+	protected String getStringDataFromTag(Element element, String tag) {
+		NodeList nodeList = element.getElementsByTagName(tag);
+		if(nodeList.getLength() > 0) {
+			Element e = (Element) nodeList.item(0);
+			return getStringDataFromElement(e);
+		}
+		return "";
+	}
+	
 	protected String getStringDataFromElement(Element e) {
     Node child = e.getFirstChild();
     if (child instanceof CharacterData) {
@@ -149,5 +184,12 @@ public class RnaManager {
     }
     return "";
   }
+	
+	protected String getStringFromElement(Element element) {
+		DOMImplementationLS lsImpl = (DOMImplementationLS)element.getOwnerDocument().getImplementation().getFeature("LS", "3.0");
+		LSSerializer serializer = lsImpl.createLSSerializer();
+		serializer.getDomConfig().setParameter("xml-declaration", false);
+		return serializer.writeToString(element);
+	}
 
 }
