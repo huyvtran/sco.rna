@@ -20,8 +20,11 @@ import org.w3c.dom.NodeList;
 import it.smartcommunitylab.rna.beans.ConfermaConcessione;
 import it.smartcommunitylab.rna.beans.EsitoRichiesta;
 import it.smartcommunitylab.rna.beans.EsitoRichiestaAiuto;
+import it.smartcommunitylab.rna.common.Utils;
+import it.smartcommunitylab.rna.exception.BadRequestException;
 import it.smartcommunitylab.rna.exception.ServiceErrorException;
 import it.smartcommunitylab.rna.model.RegistrazioneAiuto;
+import it.smartcommunitylab.rna.model.RegistrazioneAiuto.Stato;
 import it.smartcommunitylab.rna.model.RichiestaRegistrazioneAiuto;
 import it.smartcommunitylab.rna.repository.RegistrazioneAiutoRepository;
 import it.smartcommunitylab.rna.repository.RichiestaRegistrazioneAiutoRepository;
@@ -35,10 +38,21 @@ public class RnaAiutiManager extends RnaManager {
 	@Autowired
 	private RichiestaRegistrazioneAiutoRepository richiestaRepository;
 	
-	private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+	private SimpleDateFormat sdfTimestamp = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+	private SimpleDateFormat sdfDay = new SimpleDateFormat("yyyy-MM-ddXXX");
 	
-	public List<RegistrazioneAiuto> getRegistrazioneAiuto(List<String> praticheIds) {
-		List<RegistrazioneAiuto> pratiche = repository.findByPraticheIds(praticheIds);
+	public RegistrazioneAiuto getRegistrazioneAiuto(String concessioneGestoreId) {
+		return repository.findByConcessioneGestoreId(concessioneGestoreId);
+	}
+	
+	public List<RegistrazioneAiuto> getRegistrazioneAiuto(List<String> concessioneGestoreIds) {
+		List<RegistrazioneAiuto> pratiche = new ArrayList<>();
+		for(String concessioneGestoreId : concessioneGestoreIds) {
+			RegistrazioneAiuto pratica = repository.findByConcessioneGestoreId(concessioneGestoreId);
+			if(pratica != null) {
+				pratiche.add(pratica);
+			}
+		}
 		logger.info(String.format("getRegistrazioneAiuto: %s", pratiche.size()));
 		return pratiche;
 	}
@@ -46,17 +60,19 @@ public class RnaAiutiManager extends RnaManager {
 	public void addRegistrazioneAiuto(List<RegistrazioneAiuto> pratiche, Long codiceBando) throws Exception {
 		List<RegistrazioneAiuto> nuovePratiche = new ArrayList<>();
 		for(RegistrazioneAiuto pratica : pratiche) {
-			RegistrazioneAiuto praticaDb = repository.findByPraticaId(pratica.getPraticaId());
+			RegistrazioneAiuto praticaDb = repository.findByConcessioneGestoreId(pratica.getConcessioneGestoreId());
 			if(praticaDb != null) {
 				if(praticaDb.getEsitoRegistrazione() != null) {
-					logger.warn(String.format("addRegistrazioneAiuto: praticaId già inviata %s", pratica.getPraticaId()));
+					logger.warn(String.format("addRegistrazioneAiuto: concessioneGestoreId già inviata %s", pratica.getConcessioneGestoreId()));
 				} else {
 					praticaDb.setCodiceBando(codiceBando);
+					praticaDb.setStato(Stato.in_attesa);
 					repository.save(praticaDb);
 					nuovePratiche.add(praticaDb);
 				}
 			} else {
 				pratica.setCodiceBando(codiceBando);
+				pratica.setStato(Stato.in_attesa);
 				repository.save(pratica);
 				nuovePratiche.add(pratica);
 			}
@@ -94,54 +110,90 @@ public class RnaAiutiManager extends RnaManager {
 		}
 	}	
 	
-	public void confermaAiuto(List<ConfermaConcessione> concessioni) {
-		for(ConfermaConcessione concessione : concessioni) {
-			RegistrazioneAiuto pratica = repository.findByCor(concessione.getCor());
-			pratica.setAttoConcessione(concessione.getAttoConcessione());
-			pratica.setDataConcessione(concessione.getDataConcessione());
-			repository.save(pratica);
-			try {
-				Map<String, Object> contextMap = new HashMap<>(); 
-				contextMap.put("pratica", pratica);
-				String contentString = velocityParser("templates/conferma-concessione.xml", contextMap);
-				String risposta = postRequest(contentString, "ConfermaConcessione");
-				EsitoRichiesta esito = getEsitoRichiesta(risposta, "???");
-				if(esito.isSuccess()) {
+	public RegistrazioneAiuto confermaAiuto(ConfermaConcessione concessione) throws Exception {
+		RegistrazioneAiuto pratica = repository.findByCor(concessione.getCor());
+		if(pratica == null) {
+			throw new BadRequestException("concessioneGestoreId non trovato");
+		}
+		if(pratica.getStato() != Stato.ok) {
+			throw new BadRequestException("stato non compatibile");
+		}		
+		pratica.setAttoConcessione(concessione.getAttoConcessione());
+		pratica.setDataConcessione(concessione.getDataConcessione());
+		try {
+			Map<String, Object> contextMap = new HashMap<>(); 
+			contextMap.put("cor", pratica.getCor());
+			contextMap.put("attoConcessione", pratica.getAttoConcessione());
+			contextMap.put("dataConcessione", sdfDay.format(pratica.getDataConcessione()));
+			contextMap.put("notifica", "NO");
+			String contentString = velocityParser("templates/conferma-concessione.xml", contextMap);
+			String risposta = postRequest(contentString, "ConfermaConcessione");
+			EsitoRichiesta esito = getEsitoRichiesta(risposta, "return");
+			if(esito.isSuccess()) {
+				if(esito.getCode() <= 0) {
 					pratica.setEsitoConferma(esito);
 					pratica.setDataConferma(LocalDate.now());
+					pratica.setStato(Stato.confermato);
 					repository.save(pratica);
+					return pratica;					
 				} else {
-					logger.warn(String.format("confermaAiuto: errore invio richiesta  %s - %s - %s", 
-							pratica.getPraticaId(), esito.getCode(), esito.getMessage()));					
+					String msg = String.format("errore conferma concessione  %s - %s - %s", 
+							pratica.getCor(), esito.getCode(), esito.getMessage());
+					logger.warn("confermaAiuto: " + msg);
+					throw new ServiceErrorException(msg);
 				}
-			} catch (Exception e) {
-				logger.error(String.format("confermaAiuto: errore compilazione richiesta %s - %s", pratica.getPraticaId(), e.getMessage()));
-			}			
-		}
+			} else {
+				String msg = String.format("errore invio richiesta  %s - %s - %s", 
+						pratica.getCor(), esito.getCode(), esito.getMessage());
+				logger.warn("confermaAiuto: " + msg);
+				throw new ServiceErrorException(msg);
+			}
+		} catch (Exception e) {
+			String msg = String.format("errore compilazione richiesta %s - %s", pratica.getCor(), e.getMessage());
+			logger.error("confermaAiuto: " + msg);
+			throw new ServiceErrorException(msg);
+		}			
 	}
 	
-	public void annullaAiuto(List<String> praticheIds) {
-		List<RegistrazioneAiuto> pratiche = repository.findByPraticheIds(praticheIds);
-		for(RegistrazioneAiuto pratica : pratiche) {
-			try {
-				Map<String, Object> contextMap = new HashMap<>(); 
-				contextMap.put("Cor", pratica.getCor());
-				contextMap.put("Notifica", "NO");
-				String contentString = velocityParser("templates/annulla-concessione.xml", contextMap);
-				String risposta = postRequest(contentString, "AnnullaConcessione");
-				EsitoRichiesta esito = getEsitoRichiesta(risposta, "???");
-				if(esito.isSuccess()) {
+	public RegistrazioneAiuto annullaAiuto(Long cor) throws Exception {
+		RegistrazioneAiuto pratica = repository.findByCor(cor);
+		if(pratica == null) {
+			throw new BadRequestException("COR non trovato");
+		}
+		if(pratica.getStato() != Stato.ok) {
+			throw new BadRequestException("stato non compatibile");
+		}
+		try {
+			Map<String, Object> contextMap = new HashMap<>(); 
+			contextMap.put("cor", pratica.getCor());
+			contextMap.put("notifica", "NO");
+			String contentString = velocityParser("templates/annulla-concessione.xml", contextMap);
+			String risposta = postRequest(contentString, "AnnullaConcessione");
+			EsitoRichiesta esito = getEsitoRichiesta(risposta, "return");
+			if(esito.isSuccess()) {
+				if(esito.getCode() <= 0) {
 					pratica.setEsitoAnnullamento(esito);
 					pratica.setDataAnnullamento(LocalDate.now());
-					repository.save(pratica);
+					pratica.setStato(Stato.annullato);
+					repository.save(pratica);					
 				} else {
-					logger.warn(String.format("annullaAiuto: errore invio richiesta  %s - %s - %s", 
-							pratica.getPraticaId(), esito.getCode(), esito.getMessage()));					
+					String msg = String.format("errore annullamento concessione  %s - %s - %s", 
+							pratica.getCor(), esito.getCode(), esito.getMessage());
+					logger.warn("annullaAiuto: " + msg);
+					throw new ServiceErrorException(msg);
 				}
-			} catch (Exception e) {
-				logger.error(String.format("annullaAiuto: errore compilazione richiesta %s - %s", pratica.getPraticaId(), e.getMessage()));
-			}			
-		}
+				return pratica;
+			} else {
+				String msg = String.format("errore invio richiesta  %s - %s - %s", 
+						pratica.getCor(), esito.getCode(), esito.getMessage()); 
+				logger.warn("annullaAiuto: " + msg);
+				throw new ServiceErrorException(msg);
+			}
+		} catch (Exception e) {
+			String msg = String.format("errore compilazione richiesta %s - %s", pratica.getCor(), e.getMessage());
+			logger.error("annullaAiuto: " + msg);
+			throw new ServiceErrorException(msg);
+		}			
 	}
 	
 	@Scheduled(cron = "0,30 * * * * ?")
@@ -180,7 +232,10 @@ public class RnaAiutiManager extends RnaManager {
 						RegistrazioneAiuto aiuto = repository.findByConcessioneGestoreId(esitoAiuto.getConcessioneGestoreId());
 						if(aiuto != null) {
 							aiuto.setEsitoAiuto(esitoAiuto);
-							aiuto.setCor(esitoAiuto.getCor());
+							aiuto.setStato(getStatoRichiesta(esitoAiuto));
+							if((aiuto.getStato() == Stato.ok)) {
+								aiuto.setCor(esitoAiuto.getCor());
+							}
 							repository.save(aiuto);
 						} else {
 							logger.warn(String.format("inviaEsitoRichesta: aiuto non trovato  %s", esitoAiuto.getConcessioneGestoreId()));										
@@ -212,17 +267,20 @@ public class RnaAiutiManager extends RnaManager {
 				String xml = getStringFromElement(elementConcessione);
 				String codiceEsito = getStringDataFromTag(elementConcessione, "CODICE");
 				String descrizione = getStringDataFromTag(elementConcessione, "DESCRIZIONE");
+				String cor = getStringDataFromTag(elementConcessione, "COR");
+				String dataEsito = getStringDataFromTag(elementConcessione, "DATA_ESITO");
+				String concessioneGestoreId = getStringDataFromTag(elementConcessione, "ID_CONCESSIONE_GEST");
 				era.setCodiceEsito(codiceEsito);
 				era.setDescrizione(descrizione);
 				era.setMsgOriginario(xml);
-				//TODO get stato esito
-				if(codiceEsito.equals("0")) {
-					String cor = getStringDataFromTag(elementConcessione, "COR");
-					String dataEsito = getStringDataFromTag(elementConcessione, "DATA_ESITO");
-					String concessioneGestoreId = getStringDataFromTag(elementConcessione, "ID_CONCESSIONE_GEST");
+				if(Utils.isNotEmpty(cor)) {
 					era.setCor(Long.valueOf(cor));
+				}
+				if(Utils.isNotEmpty(concessioneGestoreId)) {
 					era.setConcessioneGestoreId(concessioneGestoreId);
-					era.setDataEsito(sdf.parse(dataEsito));
+				}
+				if(Utils.isNotEmpty(dataEsito)) {
+					era.setDataEsito(sdfTimestamp.parse(dataEsito));
 				}
 				result.add(era);
 			}
@@ -233,6 +291,17 @@ public class RnaAiutiManager extends RnaManager {
 	
 	private boolean isRichiestaCompletata(EsitoRichiesta esito) {
 		return esito.getMessage().equalsIgnoreCase("Completata");
+	}
+	
+	private Stato getStatoRichiesta(EsitoRichiestaAiuto era) {
+		int codice = Integer.valueOf(era.getCodiceEsito());
+		if((codice == 0) || (codice == 111) || (codice == 112)) {
+			return Stato.ok;
+		}
+		if((codice == 114) || (codice == 115)) {
+			return Stato.ko_reiterabile;
+		}
+		return Stato.ko;
 	}
 	
 }

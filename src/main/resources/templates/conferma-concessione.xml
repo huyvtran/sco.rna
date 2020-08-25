@@ -1,0 +1,11 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:web="http://webServices.raseWeb.rase.rnas.infocamere.it/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <web:ConfermaConcessione>
+         <cor>$cor</cor>
+         <notifica>$notifica</notifica>
+         <attoConcessione>$attoConcessione</attoConcessione>
+         <dataConcessione>$dataConcessione</dataConcessione>
+      </web:ConfermaConcessione>
+   </soapenv:Body>
+</soapenv:Envelope>

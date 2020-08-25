@@ -1,22 +1,22 @@
 package it.smartcommunitylab.rna.beans;
 
-import java.time.LocalDate;
+import java.util.Date;
 
 public class ConfermaConcessione {
-	private Integer cor;
-	private LocalDate dataConcessione;
+	private Long cor;
+	private Date dataConcessione;
 	private String attoConcessione;
 	
-	public Integer getCor() {
+	public Long getCor() {
 		return cor;
 	}
-	public void setCor(Integer cor) {
+	public void setCor(Long cor) {
 		this.cor = cor;
 	}
-	public LocalDate getDataConcessione() {
+	public Date getDataConcessione() {
 		return dataConcessione;
 	}
-	public void setDataConcessione(LocalDate dataConcessione) {
+	public void setDataConcessione(Date dataConcessione) {
 		this.dataConcessione = dataConcessione;
 	}
 	public String getAttoConcessione() {

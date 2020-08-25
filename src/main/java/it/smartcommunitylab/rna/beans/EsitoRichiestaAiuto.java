@@ -2,15 +2,12 @@ package it.smartcommunitylab.rna.beans;
 
 import java.util.Date;
 
-import it.smartcommunitylab.rna.model.RegistrazioneAiuto.Stato;
-
 public class EsitoRichiestaAiuto {
 	private Long cor;
 	private String concessioneGestoreId;
 	private Date dataEsito;
 	private String codiceEsito;
 	private String descrizione;
-	private Stato stato;
 	private String msgOriginario;
 	
 	public Long getCor() {
@@ -42,12 +39,6 @@ public class EsitoRichiestaAiuto {
 	}
 	public void setDescrizione(String descrizione) {
 		this.descrizione = descrizione;
-	}
-	public Stato getStato() {
-		return stato;
-	}
-	public void setStato(Stato stato) {
-		this.stato = stato;
 	}
 	public String getMsgOriginario() {
 		return msgOriginario;

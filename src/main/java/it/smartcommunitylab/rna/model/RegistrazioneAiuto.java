@@ -1,6 +1,7 @@
 package it.smartcommunitylab.rna.model;
 
 import java.time.LocalDate;
+import java.util.Date;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -16,18 +17,17 @@ import it.smartcommunitylab.rna.beans.LocalDateDeserializer;
 public class RegistrazioneAiuto {
 	
 	public static enum Stato {
-		ko, ko_ripetibile, ok
+		in_attesa, ko, ko_reiterabile, ok, confermato, annullato
 	};
 
 	@Id
 	private String id;
 	
-	private String praticaId;
 	private String cf;
 	private String concessioneGestoreId;
 	private Long codiceBando;
 	private Long cor;
-	private LocalDate dataConcessione;
+	private Date dataConcessione;
 	private String attoConcessione;
 	
 	private EsitoRichiesta esitoRegistrazione;
@@ -43,17 +43,13 @@ public class RegistrazioneAiuto {
 	@JsonDeserialize(using = LocalDateDeserializer.class)
 	private LocalDate dataAnnullamento;
 	
+	private Stato stato;
+	
 	public String getId() {
 		return id;
 	}
 	public void setId(String id) {
 		this.id = id;
-	}
-	public String getPraticaId() {
-		return praticaId;
-	}
-	public void setPraticaId(String praticaId) {
-		this.praticaId = praticaId;
 	}
 	public String getCf() {
 		return cf;
@@ -109,10 +105,10 @@ public class RegistrazioneAiuto {
 	public void setCor(Long cor) {
 		this.cor = cor;
 	}
-	public LocalDate getDataConcessione() {
+	public Date getDataConcessione() {
 		return dataConcessione;
 	}
-	public void setDataConcessione(LocalDate dataConcessione) {
+	public void setDataConcessione(Date dataConcessione) {
 		this.dataConcessione = dataConcessione;
 	}
 	public String getAttoConcessione() {
@@ -126,6 +122,12 @@ public class RegistrazioneAiuto {
 	}
 	public void setCodiceBando(Long codiceBando) {
 		this.codiceBando = codiceBando;
+	}
+	public Stato getStato() {
+		return stato;
+	}
+	public void setStato(Stato stato) {
+		this.stato = stato;
 	}
 	
 }
