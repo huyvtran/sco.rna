@@ -35,6 +35,7 @@ class RnaApplicationTests {
 		RegistrazioneAiuto aiuto = new RegistrazioneAiuto();
 		String id = UUID.randomUUID().toString();
 		aiuto.setConcessioneGestoreId(id);
+		aiuto.setCf("CTLNGL68L45A462B");
 		pratiche.add(aiuto);
 		aiutiManager.addRegistrazioneAiuto(pratiche, Long.valueOf(8726));
 		boolean completata = false;
@@ -55,6 +56,7 @@ class RnaApplicationTests {
 		RegistrazioneAiuto aiuto = new RegistrazioneAiuto();
 		String id = UUID.randomUUID().toString();
 		aiuto.setConcessioneGestoreId(id);
+		aiuto.setCf("CTLNGL68L45A462B");
 		pratiche.add(aiuto);
 		aiutiManager.addRegistrazioneAiuto(pratiche, Long.valueOf(8726));
 		boolean completata = false;
