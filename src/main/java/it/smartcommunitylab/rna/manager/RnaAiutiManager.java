@@ -289,10 +289,6 @@ public class RnaAiutiManager extends RnaManager {
 		throw new ServiceErrorException("ESITO not found");
 	}
 	
-	private boolean isRichiestaCompletata(EsitoRichiesta esito) {
-		return esito.getMessage().equalsIgnoreCase("Completata");
-	}
-	
 	private Stato getStatoRichiesta(EsitoRichiestaAiuto era) {
 		int codice = Integer.valueOf(era.getCodiceEsito());
 		if((codice == 0) || (codice == 111) || (codice == 112)) {

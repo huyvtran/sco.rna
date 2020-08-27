@@ -21,13 +21,17 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import it.smartcommunitylab.rna.beans.ConfermaConcessione;
 import it.smartcommunitylab.rna.manager.RnaAiutiManager;
+import it.smartcommunitylab.rna.manager.RnaVisureManager;
 import it.smartcommunitylab.rna.model.RegistrazioneAiuto;
 import it.smartcommunitylab.rna.model.RegistrazioneAiuto.Stato;
+import it.smartcommunitylab.rna.model.Visura;
 
 @SpringBootTest
 class RnaApplicationTests {
 	@Autowired
 	RnaAiutiManager aiutiManager;
+	@Autowired
+	RnaVisureManager visureManager;
 	
 	@Test
 	void annullaConcessione() throws Exception {
@@ -70,6 +74,21 @@ class RnaApplicationTests {
 				concessione.setDataConcessione(new Date());
 				ra = aiutiManager.confermaAiuto(concessione);
 				assertTrue(ra.getStato() == Stato.confermato);
+				completata = true;
+			}
+		}
+	}
+	
+	@Test
+	void scarivaVisure() throws Exception {
+		visureManager.addRichiestaVisuraAiuto("CTLNGL68L45A462B");
+		boolean completata = false;
+		while(!completata) {
+			TimeUnit.SECONDS.sleep(15);
+			Visura visura = visureManager.getVisura("CTLNGL68L45A462B");
+			if((visura != null) && (visura.getXmlVisuraAiuti() != null) && (visura.getXmlVisuraDeggendorf() != null)) {
+				System.out.println(visura.getXmlVisuraAiuti());
+				System.out.println(visura.getXmlVisuraDeggendorf());
 				completata = true;
 			}
 		}

@@ -154,17 +154,8 @@ public class RnaManager {
 		throw new ServiceErrorException("ESITO not found");
 	}
 	
-	protected Binary getFile(String content, String tag) throws Exception {
-		//TODO estrazione file
-		Document doc = getDocument(content);
-		NodeList nodeList = doc.getElementsByTagNameNS("*", tag);
-		if(nodeList.getLength() > 0) {
-			Element element = (Element) nodeList.item(0);
-			String byteString = getStringDataFromElement(element);
-			Binary file = new Binary(byteString.getBytes("UTF-8"));
-			return file;
-		}
-		return null;
+	protected boolean isRichiestaCompletata(EsitoRichiesta esito) {
+		return esito.getMessage().equalsIgnoreCase("Completata");
 	}
 	
 	protected String getStringDataFromTag(Element element, String tag) {
