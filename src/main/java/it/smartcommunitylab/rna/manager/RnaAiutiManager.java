@@ -83,6 +83,9 @@ public class RnaAiutiManager extends RnaManager {
 	private void inviaRichiesteAiuto(List<RegistrazioneAiuto> pratiche, Long codiceBando) throws Exception {
 		RichiestaRegistrazioneAiuto richiesta = new RichiestaRegistrazioneAiuto();
 		richiesta.setCodiceBando(codiceBando);
+		for(RegistrazioneAiuto pratica : pratiche) {
+			richiesta.getConcessioneGestoreIdList().add(pratica.getConcessioneGestoreId());
+		}
 		try {
 			Map<String, Object> contextMap = new HashMap<>(); 
 			contextMap.put("pratiche", pratiche);
@@ -196,8 +199,66 @@ public class RnaAiutiManager extends RnaManager {
 		}			
 	}
 	
+	public List<RichiestaRegistrazioneAiuto> getRichiesteAiuto(String concessioneGestoreId) {
+		return richiestaRepository.findByConcessioneGestoreId(concessioneGestoreId);
+	}
+	
+	public RegistrazioneAiuto reiteraRegistrazioneAiuto(String concessioneGestoreId, Long richiestaId) throws Exception {
+		RegistrazioneAiuto pratica = repository.findByConcessioneGestoreId(concessioneGestoreId);
+		if(pratica != null) {
+			if(Stato.ko_reiterabile.equals(pratica.getStato())) {
+				RichiestaRegistrazioneAiuto registrazioneAiuto = richiestaRepository.findByRichiestaId(richiestaId);
+				if(registrazioneAiuto == null) {
+					throw new BadRequestException(String.format("richiesta non trovata %s - %s", concessioneGestoreId, richiestaId));
+				}
+				try {
+					Map<String, Object> contextMap = new HashMap<>();
+					contextMap.put("idRichiesta", richiestaId);
+					contextMap.put("idConcessioneGest", concessioneGestoreId);
+					String contentString = velocityParser("templates/reitera-stato-richiesta.xml", contextMap);
+					String risposta = postRequest(contentString, "ReiteraRegistraAiuto");
+					EsitoRichiesta esito = getEsitoRichiesta(risposta, "return");
+					if(esito.isSuccess()) {
+						if(esito.getCode() <= 0) {
+							RichiestaRegistrazioneAiuto ra = new RichiestaRegistrazioneAiuto();
+							ra.setCodiceBando(registrazioneAiuto.getCodiceBando());
+							ra.setRichiestaId(esito.getRichiestaId());
+							ra.setEsitoRegistrazione(esito);
+							richiestaRepository.save(ra);
+							pratica.setStato(Stato.in_attesa);
+							repository.save(pratica);
+							return pratica;
+						} else {
+							String msg = String.format("errore reitera richiesta aiuto  %s - %s - %s", 
+									concessioneGestoreId, esito.getCode(), esito.getMessage());
+							logger.warn("reiteraRegistrazioneAiuto: " + msg);
+							throw new ServiceErrorException(msg);							
+						}
+					} else {
+						String msg = String.format("errore invio richiesta  %s - %s - %s", 
+								concessioneGestoreId, esito.getCode(), esito.getMessage()); 
+						logger.warn("reiteraRegistrazioneAiuto: " + msg);
+						throw new ServiceErrorException(msg);
+					}
+				} catch (Exception e) {
+					String msg = String.format("errore compilazione richiesta %s - %s", concessioneGestoreId, e.getMessage());
+					logger.warn("reiteraRegistrazioneAiuto: " + msg);
+					throw new ServiceErrorException(msg);
+				}
+			} else {
+				String msg = String.format("stato della pratica non corretto %s", concessioneGestoreId);
+				logger.warn("reiteraRegistrazioneAiuto: " + msg);
+				throw new BadRequestException(msg);
+			}
+		} else {
+			String msg = String.format("pratica non trovata %s", concessioneGestoreId);
+			logger.warn("reiteraRegistrazioneAiuto: " + msg);
+			throw new BadRequestException(msg);			
+		}
+	}
+	
 	@Scheduled(cron = "0,30 * * * * ?")
-	public void inviaEsitoRichesta() {
+	public void checkEsitoRichesta() {
 		logger.info("inviaEsitoRichesta: init");
 		List<RichiestaRegistrazioneAiuto> list = richiestaRepository.findByEsitoRispostaIsNull();
 		for(RichiestaRegistrazioneAiuto richiesta : list) {

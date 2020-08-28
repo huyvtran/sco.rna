@@ -1,5 +1,8 @@
 package it.smartcommunitylab.rna.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -15,6 +18,7 @@ public class RichiestaRegistrazioneAiuto {
 	private Long richiestaId;
 	private EsitoRichiesta esitoRegistrazione;
 	private EsitoRichiesta esitoRisposta;
+	private List<String> concessioneGestoreIdList = new ArrayList<>();
 	
 	public String getId() {
 		return id;
@@ -45,5 +49,11 @@ public class RichiestaRegistrazioneAiuto {
 	}
 	public void setRichiestaId(Long richiestaId) {
 		this.richiestaId = richiestaId;
+	}
+	public List<String> getConcessioneGestoreIdList() {
+		return concessioneGestoreIdList;
+	}
+	public void setConcessioneGestoreIdList(List<String> concessioneGestoreIdList) {
+		this.concessioneGestoreIdList = concessioneGestoreIdList;
 	}
 }
