@@ -60,9 +60,9 @@ public class RNAAiutiController {
 		}
 	}
 	
-	@PutMapping("/api/requests/{codiceBando}/{id}/confirm")
+	@PutMapping("/api/requests/{codiceBando}/confirm/{cor}")
 	@ApiOperation(value="Confermare una richiesta processata")
-	public @ResponseBody  ResponseEntity<Object> confirmRegistrazioneAiuto(@PathVariable Long codiceBando, @RequestBody ConfermaConcessione concessione) {
+	public @ResponseBody  ResponseEntity<Object> confirmRegistrazioneAiuto(@PathVariable Long codiceBando, @PathVariable Long cor, @RequestBody ConfermaConcessione concessione) {
 		try {
 			return ResponseEntity.ok(manager.confermaAiuto(concessione));
 		} catch (Exception e) {
@@ -73,7 +73,7 @@ public class RNAAiutiController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(res);
 		}
 	}
-	@PutMapping("/api/requests/{codiceBando}/{id}/cancel/{cor}")
+	@PutMapping("/api/requests/{codiceBando}/cancel/{cor}")
 	@ApiOperation(value="Annullare una richiesta processata ma non ancora confermata")
 	public @ResponseBody  ResponseEntity<Object> cancelRegistrazioneAiuto(@PathVariable Long codiceBando, @PathVariable Long cor) {
 		try {
@@ -86,7 +86,7 @@ public class RNAAiutiController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(res);
 		}
 	}
-	@PutMapping("/api/requests/{codiceBando}/{id}/repeat/{id:.*}")
+	@PutMapping("/api/requests/{codiceBando}/repeat/{id:.*}")
 	@ApiOperation(value="Reiterare una richiesta processata con errore")
 	public @ResponseBody  ResponseEntity<Object> repeatRegistrazioneAiuto(@PathVariable Long codiceBando, @PathVariable String id) {
 		try {

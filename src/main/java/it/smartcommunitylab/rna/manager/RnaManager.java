@@ -12,6 +12,13 @@ import javax.annotation.PostConstruct;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -25,7 +32,6 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
-import org.bson.types.Binary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -73,6 +79,19 @@ public class RnaManager {
 		InputSource is = new InputSource();
     is.setCharacterStream(new StringReader(content));
     Document doc = db.parse(is);
+    
+//    try {
+//		DOMSource domSource = new DOMSource(doc);
+//		StringWriter writer = new StringWriter();
+//		StreamResult result = new StreamResult(writer);
+//		TransformerFactory tf = TransformerFactory.newInstance();
+//		Transformer transformer = tf.newTransformer();
+//		transformer.transform(domSource, result);
+//		logger.info("XML IN String format is: \n" + writer.toString());
+//	} catch (Exception e) {
+//		e.printStackTrace();
+//	}
+    
     return doc;
 	}
 	
@@ -159,7 +178,7 @@ public class RnaManager {
 	}
 	
 	protected String getStringDataFromTag(Element element, String tag) {
-		NodeList nodeList = element.getElementsByTagName(tag);
+		NodeList nodeList = element.getElementsByTagNameNS("*",tag);
 		if(nodeList.getLength() > 0) {
 			Element e = (Element) nodeList.item(0);
 			return getStringDataFromElement(e);
