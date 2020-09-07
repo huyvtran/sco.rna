@@ -6,6 +6,7 @@ import java.io.StringWriter;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -110,7 +111,7 @@ class RnaApplicationTests {
 		attach.setCOD_OBIETTIVO("702200");
 		attach.setCUMULABILITA("0");
 		attach.setFLAG_CE("NO");
-		attach.setCOD_ATECO("47.64.20"); // var
+		attach.setCOD_ATECO(Collections.singletonList("47.64.20")); // var
 		attach.setID_STRUM_AIUTO_GEST("2");
 		attach.setCOD_TIPO_STRUMENTO_AIUTO("4");
 		attach.setIMPORTO_NOMINALE(300.0); // var
