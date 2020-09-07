@@ -1,6 +1,7 @@
 package it.smartcommunitylab.rna.model;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -49,9 +50,11 @@ public class RequestAttachData {
 		CODICE_REGOLAMENTO,
 		COD_OBIETTIVO,
 		CUMULABILITA,
-		FLAG_CE,
-		COD_ATECO,
+		FLAG_CE;
+	private List<String>
+		COD_ATECO;
 		
+	private String
 		ID_STRUM_AIUTO_GEST,
 		COD_TIPO_STRUMENTO_AIUTO;
 	private Double 
@@ -277,11 +280,11 @@ public class RequestAttachData {
 		FLAG_CE = fLAG_CE;
 	}
 
-	public String getCOD_ATECO() {
+	public List<String> getCOD_ATECO() {
 		return COD_ATECO;
 	}
 
-	public void setCOD_ATECO(String cOD_ATECO) {
+	public void setCOD_ATECO(List<String> cOD_ATECO) {
 		COD_ATECO = cOD_ATECO;
 	}
 
