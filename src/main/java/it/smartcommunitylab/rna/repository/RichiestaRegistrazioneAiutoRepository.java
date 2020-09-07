@@ -13,8 +13,8 @@ public interface RichiestaRegistrazioneAiutoRepository extends MongoRepository<R
 	
 	List<RichiestaRegistrazioneAiuto> findByEsitoRispostaIsNull();
 	
-	@Query(value="{concessioneGestoreIdList:?0}")
-	List<RichiestaRegistrazioneAiuto> findByConcessioneGestoreId(String concessioneGestoreId);
+	@Query(value="{concessioneGestoreIdList:?0, codiceBando: ?1}")
+	RichiestaRegistrazioneAiuto findByConcessioneGestoreIdAndCodiceBando(String concessioneGestoreId, Long codiceBando);
 	
 	RichiestaRegistrazioneAiuto findByRichiestaId(Long richiestaId);
 }

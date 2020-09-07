@@ -33,6 +33,8 @@ public class RegistrazioneAiuto {
 	private EsitoRichiesta esitoRegistrazione;
 	private EsitoRichiestaAiuto esitoAiuto;
 	
+	private RequestAttachData attach;
+	
 	private EsitoRichiesta esitoConferma;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
 	@JsonDeserialize(using = LocalDateDeserializer.class)
@@ -129,5 +131,12 @@ public class RegistrazioneAiuto {
 	public void setStato(Stato stato) {
 		this.stato = stato;
 	}
+	public RequestAttachData getAttach() {
+		return attach;
+	}
+	public void setAttach(RequestAttachData attach) {
+		this.attach = attach;
+	}
+
 	
 }

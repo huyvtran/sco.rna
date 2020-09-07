@@ -41,14 +41,14 @@ public class RnaAiutiManager extends RnaManager {
 	private SimpleDateFormat sdfTimestamp = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
 	private SimpleDateFormat sdfDay = new SimpleDateFormat("yyyy-MM-ddXXX");
 	
-	public RegistrazioneAiuto getRegistrazioneAiuto(String concessioneGestoreId) {
-		return repository.findByConcessioneGestoreId(concessioneGestoreId);
+	public RegistrazioneAiuto getRegistrazioneAiuto(String concessioneGestoreId, Long codiceBando) {
+		return repository.findByConcessioneGestoreIdAndCodiceBando(concessioneGestoreId, codiceBando);
 	}
 	
-	public List<RegistrazioneAiuto> getRegistrazioneAiuto(List<String> concessioneGestoreIds) {
+	public List<RegistrazioneAiuto> getRegistrazioneAiuto(List<String> concessioneGestoreIds, Long codiceBando) {
 		List<RegistrazioneAiuto> pratiche = new ArrayList<>();
 		for(String concessioneGestoreId : concessioneGestoreIds) {
-			RegistrazioneAiuto pratica = repository.findByConcessioneGestoreId(concessioneGestoreId);
+			RegistrazioneAiuto pratica = repository.findByConcessioneGestoreIdAndCodiceBando(concessioneGestoreId, codiceBando);
 			if(pratica != null) {
 				pratiche.add(pratica);
 			}
@@ -60,7 +60,7 @@ public class RnaAiutiManager extends RnaManager {
 	public void addRegistrazioneAiuto(List<RegistrazioneAiuto> pratiche, Long codiceBando) throws Exception {
 		List<RegistrazioneAiuto> nuovePratiche = new ArrayList<>();
 		for(RegistrazioneAiuto pratica : pratiche) {
-			RegistrazioneAiuto praticaDb = repository.findByConcessioneGestoreId(pratica.getConcessioneGestoreId());
+			RegistrazioneAiuto praticaDb = repository.findByConcessioneGestoreIdAndCodiceBando(pratica.getConcessioneGestoreId(), codiceBando);
 			if(praticaDb != null) {
 				if(praticaDb.getEsitoRegistrazione() != null) {
 					logger.warn(String.format("addRegistrazioneAiuto: concessioneGestoreId già inviata %s", pratica.getConcessioneGestoreId()));
@@ -199,21 +199,17 @@ public class RnaAiutiManager extends RnaManager {
 		}			
 	}
 	
-	public List<RichiestaRegistrazioneAiuto> getRichiesteAiuto(String concessioneGestoreId) {
-		return richiestaRepository.findByConcessioneGestoreId(concessioneGestoreId);
-	}
-	
-	public RegistrazioneAiuto reiteraRegistrazioneAiuto(String concessioneGestoreId, Long richiestaId) throws Exception {
-		RegistrazioneAiuto pratica = repository.findByConcessioneGestoreId(concessioneGestoreId);
+	public RegistrazioneAiuto reiteraRegistrazioneAiuto(String concessioneGestoreId, Long codiceBando) throws Exception {
+		RegistrazioneAiuto pratica = repository.findByConcessioneGestoreIdAndCodiceBando(concessioneGestoreId, codiceBando);
 		if(pratica != null) {
 			if(Stato.ko_reiterabile.equals(pratica.getStato())) {
-				RichiestaRegistrazioneAiuto registrazioneAiuto = richiestaRepository.findByRichiestaId(richiestaId);
+				RichiestaRegistrazioneAiuto registrazioneAiuto = richiestaRepository.findByConcessioneGestoreIdAndCodiceBando(concessioneGestoreId, codiceBando);
 				if(registrazioneAiuto == null) {
-					throw new BadRequestException(String.format("richiesta non trovata %s - %s", concessioneGestoreId, richiestaId));
+					throw new BadRequestException(String.format("richiesta non trovata %s - %s", concessioneGestoreId, codiceBando));
 				}
 				try {
 					Map<String, Object> contextMap = new HashMap<>();
-					contextMap.put("idRichiesta", richiestaId);
+					contextMap.put("idRichiesta", registrazioneAiuto.getRichiestaId());
 					contextMap.put("idConcessioneGest", concessioneGestoreId);
 					String contentString = velocityParser("templates/reitera-stato-richiesta.xml", contextMap);
 					String risposta = postRequest(contentString, "ReiteraRegistraAiuto");
@@ -290,7 +286,7 @@ public class RnaAiutiManager extends RnaManager {
 					richiestaRepository.save(richiesta);
 					List<EsitoRichiestaAiuto> esitiAiuto = getEsiti(risposta);
 					for(EsitoRichiestaAiuto esitoAiuto : esitiAiuto) {
-						RegistrazioneAiuto aiuto = repository.findByConcessioneGestoreId(esitoAiuto.getConcessioneGestoreId());
+						RegistrazioneAiuto aiuto = repository.findByConcessioneGestoreIdAndCodiceBando(esitoAiuto.getConcessioneGestoreId(), richiesta.getCodiceBando());
 						if(aiuto != null) {
 							aiuto.setEsitoAiuto(esitoAiuto);
 							aiuto.setStato(getStatoRichiesta(esitoAiuto));

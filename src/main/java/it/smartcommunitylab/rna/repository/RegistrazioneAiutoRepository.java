@@ -9,7 +9,7 @@ import it.smartcommunitylab.rna.model.RegistrazioneAiuto;
 
 @Repository
 public interface RegistrazioneAiutoRepository extends MongoRepository<RegistrazioneAiuto, String> {
-	RegistrazioneAiuto findByConcessioneGestoreId(String concessioneGestoreId);
+	RegistrazioneAiuto findByConcessioneGestoreIdAndCodiceBando(String concessioneGestoreId, Long codiceBando);
 	RegistrazioneAiuto findByCor(Long cor);
 	List<RegistrazioneAiuto> findByEsitoRegistrazioneIsNull();
 }
