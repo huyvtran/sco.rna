@@ -317,6 +317,7 @@ public class RnaAiutiManager extends RnaManager {
 			String esitoContentEnc = getStringDataFromElement(esitoElement);
 			String esitoContent = new String(Base64.getDecoder().decode(esitoContentEnc));
 			Document docEsito = getDocument(esitoContent);
+			// esito positivo
 			NodeList nodeEsitoList = docEsito.getElementsByTagNameNS("*", "ESITO_RICH_CONCESSIONE");
 			for(int i=0; i<nodeEsitoList.getLength(); i++) {
 				EsitoRichiestaAiuto era = new EsitoRichiestaAiuto();
@@ -341,6 +342,31 @@ public class RnaAiutiManager extends RnaManager {
 				}
 				result.add(era);
 			}
+			// errori
+			nodeEsitoList = docEsito.getElementsByTagNameNS("*", "ESITO_CONCESSIONE_RAW");
+			for(int i=0; i<nodeEsitoList.getLength(); i++) {
+				EsitoRichiestaAiuto era = new EsitoRichiestaAiuto();
+				Element elementConcessione = (Element) nodeEsitoList.item(i);
+				String xml = getStringFromElement(elementConcessione);
+				String codiceEsito = getStringDataFromTag(elementConcessione, "CODICE");
+				String descrizione = getStringDataFromTag(elementConcessione, "DESCRIZIONE");
+				String cor = getStringDataFromTag(elementConcessione, "COR");
+				String dataEsito = getStringDataFromTag(elementConcessione, "DATA_ESITO");
+				String concessioneGestoreId = getStringDataFromTag(elementConcessione, "ID_CONCESSIONE_GEST");
+				era.setCodiceEsito(codiceEsito);
+				era.setDescrizione(descrizione);
+				era.setMsgOriginario(xml);
+				if(Utils.isNotEmpty(cor)) {
+					era.setCor(Long.valueOf(cor));
+				}
+				if(Utils.isNotEmpty(concessioneGestoreId)) {
+					era.setConcessioneGestoreId(concessioneGestoreId);
+				}
+				if(Utils.isNotEmpty(dataEsito)) {
+					era.setDataEsito(sdfTimestamp.parse(dataEsito));
+				}
+				result.add(era);
+			}			
 			return result;
 		}
 		throw new ServiceErrorException("ESITO not found");

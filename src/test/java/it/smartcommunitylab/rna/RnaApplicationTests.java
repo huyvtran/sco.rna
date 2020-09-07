@@ -112,7 +112,7 @@ class RnaApplicationTests {
 		attach.setFLAG_CE("NO");
 		attach.setCOD_ATECO("47.64.20"); // var
 		attach.setID_STRUM_AIUTO_GEST("2");
-		attach.setCOD_TIPO_STRUMENTO_AIUTO("Sovvenzione/Contributo in conto interessi - Contributo in c/esercizio");
+		attach.setCOD_TIPO_STRUMENTO_AIUTO("4");
 		attach.setIMPORTO_NOMINALE(300.0); // var
 		attach.setIMPORTO_AGEVOLAZIONE(300.0); // var
 		attach.setINTENSITA_AIUTO("100");
