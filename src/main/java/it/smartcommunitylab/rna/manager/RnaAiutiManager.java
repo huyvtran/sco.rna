@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,8 +65,20 @@ public class RnaAiutiManager extends RnaManager {
 			if(praticaDb != null) {
 				if(praticaDb.getEsitoRegistrazione() != null) {
 					logger.warn(String.format("addRegistrazioneAiuto: concessioneGestoreId già inviata %s", pratica.getConcessioneGestoreId()));
+					// aggiornamento dei dati per la sottomissione fallita o annulata
+					if ((Stato.ko.equals(praticaDb.getStato()) || Stato.annullato.equals(praticaDb.getStato()))) {
+						praticaDb.setEsitoRegistrazione(null);
+						praticaDb.setEsitoAnnullamento(null);
+						praticaDb.setDataAnnullamento(null);
+						praticaDb.setCor(null);
+						praticaDb.setAttach(pratica.getAttach());
+						praticaDb.setStato(Stato.in_attesa);
+						repository.save(praticaDb);
+						nuovePratiche.add(praticaDb);
+					}
 				} else {
 					praticaDb.setCodiceBando(codiceBando);
+					praticaDb.setAttach(pratica.getAttach());
 					praticaDb.setStato(Stato.in_attesa);
 					repository.save(praticaDb);
 					nuovePratiche.add(praticaDb);
@@ -127,7 +140,7 @@ public class RnaAiutiManager extends RnaManager {
 			Map<String, Object> contextMap = new HashMap<>(); 
 			contextMap.put("cor", pratica.getCor());
 			contextMap.put("attoConcessione", pratica.getAttoConcessione());
-			contextMap.put("dataConcessione", sdfDay.format(pratica.getDataConcessione()));
+			contextMap.put("dataConcessione", pratica.getDataConcessione());
 			contextMap.put("notifica", "NO");
 			String contentString = velocityParser("templates/conferma-concessione.xml", contextMap);
 			String risposta = postRequest(contentString, "ConfermaConcessione");
@@ -135,7 +148,7 @@ public class RnaAiutiManager extends RnaManager {
 			if(esito.isSuccess()) {
 				if(esito.getCode() <= 0) {
 					pratica.setEsitoConferma(esito);
-					pratica.setDataConferma(LocalDate.now());
+					pratica.setDataConferma(LocalDate.now().toString());
 					pratica.setStato(Stato.confermato);
 					repository.save(pratica);
 					return pratica;					
@@ -163,7 +176,10 @@ public class RnaAiutiManager extends RnaManager {
 		if(pratica == null) {
 			throw new BadRequestException("COR non trovato");
 		}
-		if(pratica.getStato() != Stato.ok) {
+		if (Stato.annullato.equals(pratica.getStato())) {
+			return pratica;
+		}
+		if (!Stato.ok.equals(pratica.getStato())) {
 			throw new BadRequestException("stato non compatibile");
 		}
 		try {
@@ -176,7 +192,7 @@ public class RnaAiutiManager extends RnaManager {
 			if(esito.isSuccess()) {
 				if(esito.getCode() <= 0) {
 					pratica.setEsitoAnnullamento(esito);
-					pratica.setDataAnnullamento(LocalDate.now());
+					pratica.setDataAnnullamento(LocalDate.now().toString());
 					pratica.setStato(Stato.annullato);
 					repository.save(pratica);					
 				} else {
@@ -288,7 +304,7 @@ public class RnaAiutiManager extends RnaManager {
 					for(EsitoRichiestaAiuto esitoAiuto : esitiAiuto) {
 						RegistrazioneAiuto aiuto = repository.findByConcessioneGestoreIdAndCodiceBando(esitoAiuto.getConcessioneGestoreId(), richiesta.getCodiceBando());
 						if(aiuto != null) {
-							aiuto.setEsitoAiuto(esitoAiuto);
+							aiuto.setEsitoRegistrazione(esitoAiuto);
 							aiuto.setStato(getStatoRichiesta(esitoAiuto));
 							if((aiuto.getStato() == Stato.ok)) {
 								aiuto.setCor(esitoAiuto.getCor());
@@ -353,6 +369,7 @@ public class RnaAiutiManager extends RnaManager {
 				String cor = getStringDataFromTag(elementConcessione, "COR");
 				String dataEsito = getStringDataFromTag(elementConcessione, "DATA_ESITO");
 				String concessioneGestoreId = getStringDataFromTag(elementConcessione, "ID_CONCESSIONE_GEST");
+				String idInvioRaw = getStringDataFromTag(elementConcessione, "ID_INVIO_RAW");
 				era.setCodiceEsito(codiceEsito);
 				era.setDescrizione(descrizione);
 				era.setMsgOriginario(xml);
@@ -361,17 +378,44 @@ public class RnaAiutiManager extends RnaManager {
 				}
 				if(Utils.isNotEmpty(concessioneGestoreId)) {
 					era.setConcessioneGestoreId(concessioneGestoreId);
+				} else {
+					era.setConcessioneGestoreId(findIdInvioRaw(docEsito, idInvioRaw));
 				}
 				if(Utils.isNotEmpty(dataEsito)) {
 					era.setDataEsito(sdfTimestamp.parse(dataEsito));
 				}
+				
 				result.add(era);
-			}			
+			}	
 			return result;
 		}
 		throw new ServiceErrorException("ESITO not found");
 	}
 	
+	private String findIdInvioRaw(Document docEsito, String idInvioRaw) {
+		if (Utils.isEmpty(idInvioRaw)) return null;
+		
+		NodeList nodeEsitoList = docEsito.getElementsByTagNameNS("*", "CONCESSIONE_RAW");
+		
+		for(int i= 0; i<nodeEsitoList.getLength(); i++) {
+			Element elementConcessione = (Element) nodeEsitoList.item(i);
+			String id = getStringDataFromTag(elementConcessione, "ID_INVIO_RAW");
+			if (idInvioRaw.equals(id)) {
+				String raw = getStringDataFromTag(elementConcessione, "INVIO_RAW");
+				String rawXml = StringEscapeUtils.unescapeXml(raw);
+				try {
+					Document rawDoc = getDocument(rawXml);
+					String concessioneGestoreId = getStringDataFromTag(rawDoc.getDocumentElement(), "ID_CONCESSIONE_GEST");
+					return concessioneGestoreId;
+				} catch (Exception e) {
+					logger.warn(e.getMessage(), e);
+				}
+				
+			}
+		}	
+		return null;
+	}
+
 	private Stato getStatoRichiesta(EsitoRichiestaAiuto era) {
 		int codice = Integer.valueOf(era.getCodiceEsito());
 		if((codice == 0) || (codice == 111) || (codice == 112)) {

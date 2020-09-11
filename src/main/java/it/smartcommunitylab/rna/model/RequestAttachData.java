@@ -1,12 +1,6 @@
 package it.smartcommunitylab.rna.model;
 
-import java.time.LocalDate;
 import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-
-import it.smartcommunitylab.rna.beans.LocalDateDeserializer;
 
 public class RequestAttachData {
 
@@ -14,16 +8,10 @@ public class RequestAttachData {
 		CAR,
 		TITOLO_PROGETTO, 
 		DESCRIZIONE_PROGETTO,
-		COD_TIPO_INIZIATIVA;
-		
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-	@JsonDeserialize(using = LocalDateDeserializer.class)
-	private LocalDate	
+		COD_TIPO_INIZIATIVA,
 		DATA_INIZIO_PROGETTO,
 		DATA_FINE_PROGETTO,
-		DATA_CONCESSIONE;
-	
-	private String
+		DATA_CONCESSIONE,
 		NOTE_CONCESSIONE,
 		FLAG_ATTO_CONCESSIONE,
 		
@@ -96,27 +84,27 @@ public class RequestAttachData {
 		COD_TIPO_INIZIATIVA = cOD_TIPO_INIZIATIVA;
 	}
 
-	public LocalDate getDATA_INIZIO_PROGETTO() {
+	public String getDATA_INIZIO_PROGETTO() {
 		return DATA_INIZIO_PROGETTO;
 	}
 
-	public void setDATA_INIZIO_PROGETTO(LocalDate dATA_INIZIO_PROGETTO) {
+	public void setDATA_INIZIO_PROGETTO(String dATA_INIZIO_PROGETTO) {
 		DATA_INIZIO_PROGETTO = dATA_INIZIO_PROGETTO;
 	}
 
-	public LocalDate getDATA_FINE_PROGETTO() {
+	public String getDATA_FINE_PROGETTO() {
 		return DATA_FINE_PROGETTO;
 	}
 
-	public void setDATA_FINE_PROGETTO(LocalDate dATA_FINE_PROGETTO) {
+	public void setDATA_FINE_PROGETTO(String dATA_FINE_PROGETTO) {
 		DATA_FINE_PROGETTO = dATA_FINE_PROGETTO;
 	}
 
-	public LocalDate getDATA_CONCESSIONE() {
+	public String getDATA_CONCESSIONE() {
 		return DATA_CONCESSIONE;
 	}
 
-	public void setDATA_CONCESSIONE(LocalDate dATA_CONCESSIONE) {
+	public void setDATA_CONCESSIONE(String dATA_CONCESSIONE) {
 		DATA_CONCESSIONE = dATA_CONCESSIONE;
 	}
 
@@ -126,6 +114,14 @@ public class RequestAttachData {
 
 	public void setNOTE_CONCESSIONE(String nOTE_CONCESSIONE) {
 		NOTE_CONCESSIONE = nOTE_CONCESSIONE;
+	}
+
+	public String getFLAG_ATTO_CONCESSIONE() {
+		return FLAG_ATTO_CONCESSIONE;
+	}
+
+	public void setFLAG_ATTO_CONCESSIONE(String fLAG_ATTO_CONCESSIONE) {
+		FLAG_ATTO_CONCESSIONE = fLAG_ATTO_CONCESSIONE;
 	}
 
 	public String getCOD_TIPO_SOGGETTO() {
@@ -328,13 +324,6 @@ public class RequestAttachData {
 		INTENSITA_AIUTO = iNTENSITA_AIUTO;
 	}
 
-	public String getFLAG_ATTO_CONCESSIONE() {
-		return FLAG_ATTO_CONCESSIONE;
-	}
-
-	public void setFLAG_ATTO_CONCESSIONE(String fLAG_ATTO_CONCESSIONE) {
-		FLAG_ATTO_CONCESSIONE = fLAG_ATTO_CONCESSIONE;
-	}
-
 	
+
 }

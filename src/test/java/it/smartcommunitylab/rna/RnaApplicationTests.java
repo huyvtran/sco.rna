@@ -7,7 +7,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -46,10 +45,22 @@ class RnaApplicationTests {
 		boolean completata = false;
 		while(!completata) {
 			TimeUnit.SECONDS.sleep(15);
-			RegistrazioneAiuto ra = aiutiManager.getRegistrazioneAiuto(aiuto.getId(), CODICE_BANDO);
+			RegistrazioneAiuto ra = aiutiManager.getRegistrazioneAiuto(aiuto.getConcessioneGestoreId(), CODICE_BANDO);
 			if((ra != null) && (ra.getCor() != null)) {
 				ra = aiutiManager.annullaAiuto(ra.getCor());
 				assertTrue(ra.getStato() == Stato.annullato);
+				completata = true;
+			}
+		}
+		
+		aiuto.getAttach().setDATA_CONCESSIONE(LocalDate.now().toString());
+		aiutiManager.addRegistrazioneAiuto(pratiche, CODICE_BANDO);
+		completata = false;
+		while(!completata) {
+			TimeUnit.SECONDS.sleep(15);
+			RegistrazioneAiuto ra = aiutiManager.getRegistrazioneAiuto(aiuto.getConcessioneGestoreId(), CODICE_BANDO);
+			if((ra != null) && (ra.getCor() != null) && !Stato.in_attesa.equals(ra.getStato())) {
+				assertTrue(ra.getStato() == Stato.ok);
 				completata = true;
 			}
 		}
@@ -64,12 +75,12 @@ class RnaApplicationTests {
 		boolean completata = false;
 		while(!completata) {
 			TimeUnit.SECONDS.sleep(15);
-			RegistrazioneAiuto ra = aiutiManager.getRegistrazioneAiuto(aiuto.getId(), CODICE_BANDO);
+			RegistrazioneAiuto ra = aiutiManager.getRegistrazioneAiuto(aiuto.getConcessioneGestoreId(), CODICE_BANDO);
 			if((ra != null) && (ra.getCor() != null)) {
 				ConfermaConcessione concessione = new ConfermaConcessione();
 				concessione.setCor(ra.getCor());
 				concessione.setAttoConcessione("111112222333");
-				concessione.setDataConcessione(new Date());
+				concessione.setDataConcessione(LocalDate.now().plusDays(3).toString());
 				ra = aiutiManager.confermaAiuto(concessione);
 				assertTrue(ra.getStato() == Stato.confermato);
 				completata = true;
@@ -88,10 +99,10 @@ class RnaApplicationTests {
 		attach.setTITOLO_PROGETTO("Linee di finanziamento PLAFOND RIPRESA TRENTINO");
 		attach.setDESCRIZIONE_PROGETTO("Concessioni di contributi in conto interessi agli operatori economici per contenere gli effetti negativi causati dal COVID-19");
 		attach.setCOD_TIPO_INIZIATIVA("07.99");
-		attach.setDATA_INIZIO_PROGETTO(LocalDate.now());
-		attach.setDATA_FINE_PROGETTO(attach.getDATA_INIZIO_PROGETTO().plusYears(1));
+		attach.setDATA_INIZIO_PROGETTO(LocalDate.now().toString());
+		attach.setDATA_FINE_PROGETTO(LocalDate.parse(attach.getDATA_INIZIO_PROGETTO()).plusYears(1).toString());
 		attach.setFLAG_ATTO_CONCESSIONE("SI");
-		attach.setDATA_CONCESSIONE(LocalDate.now());
+		attach.setDATA_CONCESSIONE(LocalDate.now().plusDays(1).toString());
 //		attach.setNOTE_CONCESSIONE(null);
 		attach.setCOD_TIPO_SOGGETTO("1"); // var
 		attach.setDENOMINAZIONE("CATALUCCI ANGELA"); // var
@@ -117,6 +128,7 @@ class RnaApplicationTests {
 		attach.setIMPORTO_NOMINALE(300.0); // var
 		attach.setIMPORTO_AGEVOLAZIONE(300.0); // var
 		attach.setINTENSITA_AIUTO("100");
+		attach.setID_COMP_AIUTO_GEST("2");
 		
 		aiuto.setAttach(attach);
 		

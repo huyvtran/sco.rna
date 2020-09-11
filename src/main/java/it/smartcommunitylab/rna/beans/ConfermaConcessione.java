@@ -4,7 +4,7 @@ import java.util.Date;
 
 public class ConfermaConcessione {
 	private Long cor;
-	private Date dataConcessione;
+	private String dataConcessione;
 	private String attoConcessione;
 	
 	public Long getCor() {
@@ -13,10 +13,10 @@ public class ConfermaConcessione {
 	public void setCor(Long cor) {
 		this.cor = cor;
 	}
-	public Date getDataConcessione() {
+	public String getDataConcessione() {
 		return dataConcessione;
 	}
-	public void setDataConcessione(Date dataConcessione) {
+	public void setDataConcessione(String dataConcessione) {
 		this.dataConcessione = dataConcessione;
 	}
 	public String getAttoConcessione() {

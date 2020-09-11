@@ -27,23 +27,17 @@ public class RegistrazioneAiuto {
 	private String concessioneGestoreId;
 	private Long codiceBando;
 	private Long cor;
-	private Date dataConcessione;
+	private String dataConcessione;
 	private String attoConcessione;
 	
-	private EsitoRichiesta esitoRegistrazione;
-	private EsitoRichiestaAiuto esitoAiuto;
+	private EsitoRichiestaAiuto esitoRegistrazione;
+	private EsitoRichiesta esitoConferma;
+	private EsitoRichiesta esitoAnnullamento;
 	
 	private RequestAttachData attach;
 	
-	private EsitoRichiesta esitoConferma;
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-	@JsonDeserialize(using = LocalDateDeserializer.class)
-	private LocalDate dataConferma;
-	
-	private EsitoRichiesta esitoAnnullamento;
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-	@JsonDeserialize(using = LocalDateDeserializer.class)
-	private LocalDate dataAnnullamento;
+	private String dataConferma;
+	private String dataAnnullamento;
 	
 	private Stato stato;
 	
@@ -59,16 +53,10 @@ public class RegistrazioneAiuto {
 	public void setCf(String cf) {
 		this.cf = cf;
 	}
-	public LocalDate getDataConferma() {
-		return dataConferma;
-	}
-	public void setDataConferma(LocalDate dataConferma) {
-		this.dataConferma = dataConferma;
-	}
-	public EsitoRichiesta getEsitoRegistrazione() {
+	public EsitoRichiestaAiuto getEsitoRegistrazione() {
 		return esitoRegistrazione;
 	}
-	public void setEsitoRegistrazione(EsitoRichiesta esitoRegistrazione) {
+	public void setEsitoRegistrazione(EsitoRichiestaAiuto esitoRegistrazione) {
 		this.esitoRegistrazione = esitoRegistrazione;
 	}
 	public EsitoRichiesta getEsitoConferma() {
@@ -83,18 +71,6 @@ public class RegistrazioneAiuto {
 	public void setEsitoAnnullamento(EsitoRichiesta esitoAnnullamento) {
 		this.esitoAnnullamento = esitoAnnullamento;
 	}
-	public LocalDate getDataAnnullamento() {
-		return dataAnnullamento;
-	}
-	public void setDataAnnullamento(LocalDate dataAnnullamento) {
-		this.dataAnnullamento = dataAnnullamento;
-	}
-	public EsitoRichiestaAiuto getEsitoAiuto() {
-		return esitoAiuto;
-	}
-	public void setEsitoAiuto(EsitoRichiestaAiuto esitoAiuto) {
-		this.esitoAiuto = esitoAiuto;
-	}
 	public String getConcessioneGestoreId() {
 		return concessioneGestoreId;
 	}
@@ -106,12 +82,6 @@ public class RegistrazioneAiuto {
 	}
 	public void setCor(Long cor) {
 		this.cor = cor;
-	}
-	public Date getDataConcessione() {
-		return dataConcessione;
-	}
-	public void setDataConcessione(Date dataConcessione) {
-		this.dataConcessione = dataConcessione;
 	}
 	public String getAttoConcessione() {
 		return attoConcessione;
@@ -137,6 +107,25 @@ public class RegistrazioneAiuto {
 	public void setAttach(RequestAttachData attach) {
 		this.attach = attach;
 	}
+	public String getDataConcessione() {
+		return dataConcessione;
+	}
+	public void setDataConcessione(String dataConcessione) {
+		this.dataConcessione = dataConcessione;
+	}
+	public String getDataConferma() {
+		return dataConferma;
+	}
+	public void setDataConferma(String dataConferma) {
+		this.dataConferma = dataConferma;
+	}
+	public String getDataAnnullamento() {
+		return dataAnnullamento;
+	}
+	public void setDataAnnullamento(String dataAnnullamento) {
+		this.dataAnnullamento = dataAnnullamento;
+	}
 
+	
 	
 }

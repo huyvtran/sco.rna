@@ -18,18 +18,25 @@
             <ns2:FLAG_ATTO_CONCESSIONE>$pratica.attach.FLAG_ATTO_CONCESSIONE</ns2:FLAG_ATTO_CONCESSIONE>
             <ns2:DATA_CONCESSIONE>$pratica.attach.DATA_CONCESSIONE</ns2:DATA_CONCESSIONE>
             <ns2:CODICE_LOCALE_PROGETTO>$pratica.concessioneGestoreId</ns2:CODICE_LOCALE_PROGETTO>
+            #if ($pratica.attach.NOTE_CONCESSIONE)
             <ns2:NOTE_CONCESSIONE>$pratica.attach.NOTE_CONCESSIONE</ns2:NOTE_CONCESSIONE>
-            
+            #end
             <ns2:BENEFICIARIO>
                 <ns3:COD_TIPO_SOGGETTO>$pratica.attach.COD_TIPO_SOGGETTO</ns3:COD_TIPO_SOGGETTO>
                 <ns3:CODICE_FISCALE>$pratica.cf</ns3:CODICE_FISCALE>
                 <ns3:DENOMINAZIONE>$pratica.attach.DENOMINAZIONE</ns3:DENOMINAZIONE>
+                #if ($pratica.attach.COD_DIMENSIONE_IMPRESA)
                 <ns3:COD_DIMENSIONE_IMPRESA>$pratica.attach.COD_DIMENSIONE_IMPRESA</ns3:COD_DIMENSIONE_IMPRESA>
+                #end
+                #if ($pratica.attach.COD_FORMA_GIURIDICA)
                 <ns3:COD_FORMA_GIURIDICA>$pratica.attach.COD_FORMA_GIURIDICA</ns3:COD_FORMA_GIURIDICA>
+                #end
                 <ns3:SEDE_LEGALE>
                     <ns3:INDIRIZZO>$pratica.attach.INDIRIZZO</ns3:INDIRIZZO>
                     <ns3:COD_NAZIONE>000</ns3:COD_NAZIONE>
+                    #if ($pratica.attach.COD_COMUNE)
                     <ns3:COD_COMUNE>$pratica.attach.COD_COMUNE</ns3:COD_COMUNE>
+                    #end
                     <ns3:COMUNE>$pratica.attach.COMUNE</ns3:COMUNE>
                     <ns3:CAP>$pratica.attach.CAP</ns3:CAP>
                 </ns3:SEDE_LEGALE>
