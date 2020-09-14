@@ -72,6 +72,8 @@ public class RnaAiutiManager extends RnaManager {
 						praticaDb.setDataAnnullamento(null);
 						praticaDb.setCor(null);
 						praticaDb.setAttach(pratica.getAttach());
+						praticaDb.setCf(pratica.getCf());
+						praticaDb.setConcessioneGestoreId(pratica.getConcessioneGestoreId());
 						praticaDb.setStato(Stato.in_attesa);
 						repository.save(praticaDb);
 						nuovePratiche.add(praticaDb);
@@ -79,6 +81,8 @@ public class RnaAiutiManager extends RnaManager {
 				} else {
 					praticaDb.setCodiceBando(codiceBando);
 					praticaDb.setAttach(pratica.getAttach());
+					praticaDb.setCf(pratica.getCf());
+					praticaDb.setConcessioneGestoreId(pratica.getConcessioneGestoreId());
 					praticaDb.setStato(Stato.in_attesa);
 					repository.save(praticaDb);
 					nuovePratiche.add(praticaDb);
@@ -97,6 +101,7 @@ public class RnaAiutiManager extends RnaManager {
 		RichiestaRegistrazioneAiuto richiesta = new RichiestaRegistrazioneAiuto();
 		richiesta.setCodiceBando(codiceBando);
 		for(RegistrazioneAiuto pratica : pratiche) {
+			prepareDati(pratica);
 			richiesta.getConcessioneGestoreIdList().add(pratica.getConcessioneGestoreId());
 		}
 		try {
@@ -126,6 +131,10 @@ public class RnaAiutiManager extends RnaManager {
 		}
 	}	
 	
+	private void prepareDati(RegistrazioneAiuto pratica) {
+		pratica.getAttach().setDENOMINAZIONE(StringEscapeUtils.escapeXml(pratica.getAttach().getDENOMINAZIONE()));
+	}
+
 	public RegistrazioneAiuto confermaAiuto(ConfermaConcessione concessione) throws Exception {
 		RegistrazioneAiuto pratica = repository.findByCor(concessione.getCor());
 		if(pratica == null) {
