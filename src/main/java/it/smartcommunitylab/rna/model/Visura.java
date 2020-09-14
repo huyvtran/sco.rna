@@ -1,5 +1,7 @@
 package it.smartcommunitylab.rna.model;
 
+import java.util.Map;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -18,8 +20,8 @@ public class Visura {
 	private Long richiestaVisuraDeggendorfId;
 	private EsitoRichiesta esitoVisuraDeggendorf;
 	private EsitoRichiesta esitoDownloadVisuraDeggendorf;
-	private String xmlVisuraAiuti;
-	private String xmlVisuraDeggendorf;
+	private Map<String, Object> visuraAiuti;
+	private Map<String, Object> visuraDeggendorf;
 	
 	public String getId() {
 		return id;
@@ -69,18 +71,16 @@ public class Visura {
 	public void setEsitoDownloadVisuraDeggendorf(EsitoRichiesta esitoDownloadVisuraDeggendorf) {
 		this.esitoDownloadVisuraDeggendorf = esitoDownloadVisuraDeggendorf;
 	}
-	public String getXmlVisuraAiuti() {
-		return xmlVisuraAiuti;
+	public Map<String, Object> getVisuraAiuti() {
+		return visuraAiuti;
 	}
-	public void setXmlVisuraAiuti(String xmlVisuraAiuti) {
-		this.xmlVisuraAiuti = xmlVisuraAiuti;
+	public void setVisuraAiuti(Map<String, Object> visuraAiuti) {
+		this.visuraAiuti = visuraAiuti;
 	}
-	public String getXmlVisuraDeggendorf() {
-		return xmlVisuraDeggendorf;
+	public Map<String, Object> getVisuraDeggendorf() {
+		return visuraDeggendorf;
 	}
-	public void setXmlVisuraDeggendorf(String xmlVisuraDeggendorf) {
-		this.xmlVisuraDeggendorf = xmlVisuraDeggendorf;
+	public void setVisuraDeggendorf(Map<String, Object> visuraDeggendorf) {
+		this.visuraDeggendorf = visuraDeggendorf;
 	}
-	 
-	
 }

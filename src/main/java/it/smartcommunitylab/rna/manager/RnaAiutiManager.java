@@ -39,6 +39,10 @@ public class RnaAiutiManager extends RnaManager {
 	@Autowired
 	private RichiestaRegistrazioneAiutoRepository richiestaRepository;
 	
+	@Autowired
+	private RnaVisureManager visureManager;
+	
+	
 	private SimpleDateFormat sdfTimestamp = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
 	private SimpleDateFormat sdfDay = new SimpleDateFormat("yyyy-MM-ddXXX");
 	
@@ -280,7 +284,7 @@ public class RnaAiutiManager extends RnaManager {
 	
 	@Scheduled(cron = "0,30 * * * * ?")
 	public void checkEsitoRichesta() {
-		logger.info("inviaEsitoRichesta: init");
+		logger.debug("inviaEsitoRichesta: init");
 		List<RichiestaRegistrazioneAiuto> list = richiestaRepository.findByEsitoRispostaIsNull();
 		for(RichiestaRegistrazioneAiuto richiesta : list) {
 			try {
@@ -317,6 +321,7 @@ public class RnaAiutiManager extends RnaManager {
 							aiuto.setStato(getStatoRichiesta(esitoAiuto));
 							if((aiuto.getStato() == Stato.ok)) {
 								aiuto.setCor(esitoAiuto.getCor());
+								requestVisure(aiuto.getCf());
 							}
 							repository.save(aiuto);
 						} else {
@@ -333,6 +338,14 @@ public class RnaAiutiManager extends RnaManager {
 		}
 	}
 	
+	private void requestVisure(String cf) {
+		try {
+			visureManager.addRichiestaVisuraAiuto(cf);
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+		}
+	}
+
 	private List<EsitoRichiestaAiuto> getEsiti(String content) throws Exception {
 		Document document = getDocument(content);
 		NodeList nodeList = document.getElementsByTagNameNS("*", "esito");

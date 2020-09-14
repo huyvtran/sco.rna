@@ -122,7 +122,7 @@ class RnaApplicationTests {
 		attach.setCOD_OBIETTIVO("702200");
 		attach.setCUMULABILITA("0");
 		attach.setFLAG_CE("NO");
-		attach.setCOD_ATECO(Collections.singletonList("47.64.20")); // var
+		attach.setCOD_ATECO(Collections.singletonList("55.1")); // var
 		attach.setID_STRUM_AIUTO_GEST("2");
 		attach.setCOD_TIPO_STRUMENTO_AIUTO("4");
 		attach.setIMPORTO_NOMINALE(300.0); // var
@@ -142,9 +142,9 @@ class RnaApplicationTests {
 		while(!completata) {
 			TimeUnit.SECONDS.sleep(15);
 			Visura visura = visureManager.getVisura("CTLNGL68L45A462B");
-			if((visura != null) && (visura.getXmlVisuraAiuti() != null) && (visura.getXmlVisuraDeggendorf() != null)) {
-				System.out.println(visura.getXmlVisuraAiuti());
-				System.out.println(visura.getXmlVisuraDeggendorf());
+			if((visura != null) && (visura.getVisuraAiuti() != null) && (visura.getVisuraDeggendorf() != null)) {
+				System.out.println(visura.getVisuraAiuti());
+				System.out.println(visura.getVisuraDeggendorf());
 				completata = true;
 			}
 		}

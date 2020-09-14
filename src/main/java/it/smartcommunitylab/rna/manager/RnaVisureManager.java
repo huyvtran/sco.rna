@@ -14,6 +14,10 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+
 import it.smartcommunitylab.rna.beans.EsitoRichiesta;
 import it.smartcommunitylab.rna.exception.ServiceErrorException;
 import it.smartcommunitylab.rna.model.Visura;
@@ -25,6 +29,9 @@ public class RnaVisureManager extends RnaManager {
 	
 	@Autowired
 	private VisuraRepository visuraRepository;
+	
+	private XmlMapper xmlMapper = new XmlMapper();
+	private ObjectMapper jsonMapper = new ObjectMapper();
 	
 	public Visura getVisura(String cf) {
 		return visuraRepository.findByCf(cf);
@@ -40,7 +47,7 @@ public class RnaVisureManager extends RnaManager {
 		return inviaRichiesteVisure(visuraDb);
 	}
 	
-	public Visura inviaRichiesteVisure(Visura visura) throws Exception {
+	private Visura inviaRichiesteVisure(Visura visura) throws Exception {
 		try {
 			Map<String, Object> contextMap = new HashMap<>(); 
 			contextMap.put("codiceFiscale", visura.getCf());
@@ -121,7 +128,7 @@ public class RnaVisureManager extends RnaManager {
 						if(esito.isSuccess()) {
 							visura.setEsitoDownloadVisuraAiuti(esito);
 							if(esito.getCode() <= 0) {
-								visura.setXmlVisuraAiuti(getVisuraXml(risposta));
+								visura.setVisuraAiuti(xmlToJson(getVisuraXml(risposta)));
 							} else {
 								logger.warn(String.format("downloadVisura: errore esecuzione scarica visura aiuti  %s - %s - %s", 
 										visura.getCf(), esito.getCode(), esito.getMessage()));
@@ -168,7 +175,7 @@ public class RnaVisureManager extends RnaManager {
 						if(esito.isSuccess()) {
 							visura.setEsitoDownloadVisuraDeggendorf(esito);
 							if(esito.getCode() <= 0) {
-								visura.setXmlVisuraDeggendorf(getVisuraXml(risposta));
+								visura.setVisuraDeggendorf(xmlToJson((getVisuraXml(risposta))));
 							} else {
 								logger.warn(String.format("downloadVisura: errore esecuzione scarica visura deggendorf  %s - %s - %s", 
 										visura.getCf(), esito.getCode(), esito.getMessage()));
@@ -198,5 +205,11 @@ public class RnaVisureManager extends RnaManager {
 		}
 		return null;
 	}
-		
+	
+	
+	@SuppressWarnings("unchecked")
+	private Map<String, Object> xmlToJson(String s) throws Exception {
+		JsonNode node = xmlMapper.readTree(s.getBytes());
+		return jsonMapper.convertValue(node, Map.class);
+	}
 }
