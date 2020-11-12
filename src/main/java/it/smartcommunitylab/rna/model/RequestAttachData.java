@@ -38,7 +38,9 @@ public class RequestAttachData {
 		CODICE_REGOLAMENTO,
 		COD_OBIETTIVO,
 		CUMULABILITA,
-		FLAG_CE;
+		FLAG_CE,
+		CODICE_CE,
+		CODICE_SETTORE;
 	private List<String>
 		COD_ATECO;
 		
@@ -322,6 +324,22 @@ public class RequestAttachData {
 
 	public void setINTENSITA_AIUTO(String iNTENSITA_AIUTO) {
 		INTENSITA_AIUTO = iNTENSITA_AIUTO;
+	}
+
+	public String getCODICE_CE() {
+		return CODICE_CE;
+	}
+
+	public void setCODICE_CE(String cODICE_CE) {
+		CODICE_CE = cODICE_CE;
+	}
+
+	public String getCODICE_SETTORE() {
+		return CODICE_SETTORE;
+	}
+
+	public void setCODICE_SETTORE(String cODICE_SETTORE) {
+		CODICE_SETTORE = cODICE_SETTORE;
 	}
 
 	

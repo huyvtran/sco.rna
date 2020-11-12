@@ -64,6 +64,12 @@
                     <ns6:COD_OBIETTIVO>$pratica.attach.COD_OBIETTIVO</ns6:COD_OBIETTIVO>
                     <ns6:CUMULABILITA>$pratica.attach.CUMULABILITA</ns6:CUMULABILITA>
                     <ns6:FLAG_CE>$pratica.attach.FLAG_CE</ns6:FLAG_CE>
+                    #if ($pratica.attach.CODICE_CE)
+                	<ns6:CODICE_CE>$pratica.attach.CODICE_CE</ns6:CODICE_CE>
+                	#end
+                    #if ($pratica.attach.CODICE_SETTORE)
+                	<ns6:CODICE_SETTORE>$pratica.attach.CODICE_SETTORE</ns6:CODICE_SETTORE>
+                	#end
                     <ns6:COD_ATECO_LIST>
                     	#foreach($ateco in $pratica.attach.COD_ATECO)
                         <ns6:COD_ATECO>$ateco</ns6:COD_ATECO>
